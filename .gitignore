@@ -12,3 +12,4 @@ yarn-error.log*
 pnpm-debug.log*
 /.worktrees/
 dashboard-*-preview.png
+dashboard-preview.png

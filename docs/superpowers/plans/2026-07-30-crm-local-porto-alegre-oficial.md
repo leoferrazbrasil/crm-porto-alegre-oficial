@@ -26,7 +26,7 @@
 - Create: `package.json`
 - Create: `tsconfig.json`
 - Create: `next.config.mjs`
-- Create: `vitest.config.ts`
+- Create: `vitest.config.mts`
 - Create: `src/app/layout.tsx`
 - Create: `src/app/globals.css`
 - Create: `src/app/page.tsx`
