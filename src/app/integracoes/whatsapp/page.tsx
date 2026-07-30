@@ -3,9 +3,9 @@ import Link from "next/link";
 
 import { getProfileDisplayName } from "@/lib/auth/access";
 import { requireCurrentAdmin } from "@/lib/auth/session";
-import { LeadForm } from "../LeadForm";
+import { WhatsAppConnectionPanel } from "./WhatsAppConnectionPanel";
 
-export default async function NewLeadPage() {
+export default async function WhatsAppIntegrationPage() {
   const { profile, user } = await requireCurrentAdmin();
   const adminName = getProfileDisplayName(
     profile,
@@ -30,11 +30,11 @@ export default async function NewLeadPage() {
             <span className="navDot" />
             Visão geral
           </Link>
-          <Link className="navItem navItemActive" href="/leads">
+          <Link className="navItem" href="/leads">
             <span className="navDot" />
             Leads
           </Link>
-          <Link className="navItem" href="/integracoes/whatsapp">
+          <Link className="navItem navItemActive" href="/integracoes/whatsapp">
             <span className="navDot" />
             WhatsApp
           </Link>
@@ -61,17 +61,21 @@ export default async function NewLeadPage() {
       <main className="mainContent">
         <header className="pageHeader">
           <div>
-            <p className="eyebrow accentText">Novo cadastro</p>
-            <h1>Cadastrar lead</h1>
+            <p className="eyebrow accentText">Integrações</p>
+            <h1>WhatsApp via Z-API</h1>
             <p className="headerDescription">
-              Registre uma oportunidade comercial com origem, etapa, valor,
-              probabilidade e próxima ação definida.
+              Conecte a instância autorizada por QR Code e acompanhe o status
+              da sessão sem expor credenciais no navegador.
             </p>
+          </div>
+          <div className="headerMeta">
+            <span>V1 segura</span>
+            <strong>Sem disparos automáticos</strong>
           </div>
         </header>
 
         <section className="sectionBlock">
-          <LeadForm mode="create" />
+          <WhatsAppConnectionPanel />
         </section>
       </main>
       <div className="brandRuler" aria-hidden="true" />

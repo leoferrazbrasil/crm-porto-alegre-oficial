@@ -38,6 +38,10 @@ export default async function LeadsPage() {
             <span className="navDot" />
             Leads
           </Link>
+          <Link className="navItem" href="/integracoes/whatsapp">
+            <span className="navDot" />
+            WhatsApp
+          </Link>
           <Link className="navItem" href="/perfil">
             <span className="navDot" />
             Perfil
