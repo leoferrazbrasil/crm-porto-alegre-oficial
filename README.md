@@ -45,10 +45,10 @@ Copie `.env.example` para `.env.local` e preencha:
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 ```
 
-Não armazene a chave `service_role` no frontend ou no Git.
+Não armazene chaves `sb_secret_` ou `service_role` no frontend ou no Git.
 
 ## Segurança operacional
 

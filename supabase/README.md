@@ -5,8 +5,8 @@ A primeira versão do CRM funciona localmente com dados simulados. Estes arquivo
 ## Configuração local
 
 1. Copie `.env.example` para `.env.local`.
-2. Preencha somente `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
-3. Nunca adicione a chave `service_role` ao frontend ou ao Git.
+2. Preencha somente `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
+3. Nunca adicione uma chave `sb_secret_` ou `service_role` ao frontend ou ao Git.
 4. Execute `supabase/schema.sql` no SQL Editor do projeto Supabase.
 
 Sem essas variáveis, `getSupabaseBrowserClient()` retorna `null` e a aplicação permanece em modo local.
@@ -24,4 +24,3 @@ O primeiro perfil operador deve ser criado administrativamente após o cadastro 
 - Leads originados no Instagram são cadastrados manualmente.
 - Não existe automação de mensagens, publicação ou engajamento.
 - O schema registra eventos para auditoria futura, mas a interface local ainda não persiste dados.
-

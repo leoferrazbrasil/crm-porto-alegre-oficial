@@ -7,20 +7,32 @@ describe("resolveSupabaseConfig", () => {
     expect(
       resolveSupabaseConfig({
         url: "https://example.supabase.co",
-        anonKey: ""
+        publishableKey: ""
       })
     ).toBeNull();
   });
 
-  it("normaliza a configuração quando URL e chave pública existem", () => {
+  it("normaliza a configuração com a chave publicável atual", () => {
     expect(
       resolveSupabaseConfig({
         url: " https://example.supabase.co/ ",
-        anonKey: " public-anon-key "
+        publishableKey: " sb_publishable_example "
       })
     ).toEqual({
       url: "https://example.supabase.co",
-      anonKey: "public-anon-key"
+      publishableKey: "sb_publishable_example"
+    });
+  });
+
+  it("mantém compatibilidade com a variável anon legada", () => {
+    expect(
+      resolveSupabaseConfig({
+        url: "https://example.supabase.co",
+        anonKey: "legacy-anon-key"
+      })
+    ).toEqual({
+      url: "https://example.supabase.co",
+      publishableKey: "legacy-anon-key"
     });
   });
 });
