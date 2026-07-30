@@ -67,7 +67,9 @@ export default async function Home() {
 
         <div className="sidebarFooter">
           <span className="eyebrow">Acesso atual</span>
-          <strong>{adminName}</strong>
+          <Link className="profileUserLink" href="/perfil">
+            {adminName}
+          </Link>
           <span>Administrador do CRM</span>
           <form action="/auth/sign-out" method="post">
             <button className="signOutButton" type="submit">
