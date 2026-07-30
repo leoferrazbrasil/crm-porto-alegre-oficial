@@ -4,8 +4,7 @@ Primeira versão operacional local do CRM comercial da Porto Alegre Oficial.
 
 ## Estado atual
 
-- Leonardo opera o CRM.
-- O proprietário acompanha indicadores em modo leitura.
+- Leonardo e o proprietário possuem acesso administrativo integral ao CRM.
 - A aplicação utiliza dados simulados nesta V1.
 - O Supabase está preparado, mas não é obrigatório para executar localmente.
 - Não existe integração direta com Instagram, automação de mensagens ou publicação.

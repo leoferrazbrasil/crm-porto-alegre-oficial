@@ -1,4 +1,4 @@
-create type public.crm_role as enum ('operator', 'viewer');
+create type public.crm_role as enum ('admin', 'operator', 'viewer');
 
 create table public.profiles (
   user_id uuid primary key references auth.users(id) on delete cascade,
@@ -93,44 +93,44 @@ on public.profiles for select
 to authenticated
 using (true);
 
-create policy "operator manages profiles"
+create policy "administrators manage profiles"
 on public.profiles for all
 to authenticated
-using (public.current_crm_role() = 'operator')
-with check (public.current_crm_role() = 'operator');
+using (public.current_crm_role()::text in ('admin', 'operator'))
+with check (public.current_crm_role()::text in ('admin', 'operator'));
 
 create policy "authenticated users read leads"
 on public.leads for select
 to authenticated
 using (true);
 
-create policy "operator manages leads"
+create policy "administrators manage leads"
 on public.leads for all
 to authenticated
-using (public.current_crm_role() = 'operator')
-with check (public.current_crm_role() = 'operator');
+using (public.current_crm_role()::text in ('admin', 'operator'))
+with check (public.current_crm_role()::text in ('admin', 'operator'));
 
 create policy "authenticated users read tasks"
 on public.commercial_tasks for select
 to authenticated
 using (true);
 
-create policy "operator manages tasks"
+create policy "administrators manage tasks"
 on public.commercial_tasks for all
 to authenticated
-using (public.current_crm_role() = 'operator')
-with check (public.current_crm_role() = 'operator');
+using (public.current_crm_role()::text in ('admin', 'operator'))
+with check (public.current_crm_role()::text in ('admin', 'operator'));
 
 create policy "authenticated users read events"
 on public.crm_events for select
 to authenticated
 using (true);
 
-create policy "operator creates events"
+create policy "administrators create events"
 on public.crm_events for insert
 to authenticated
 with check (
-  public.current_crm_role() = 'operator'
+  public.current_crm_role()::text in ('admin', 'operator')
   and actor_id = auth.uid()
 );
 

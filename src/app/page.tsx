@@ -55,8 +55,8 @@ export default function Home() {
 
         <div className="sidebarFooter">
           <span className="eyebrow">Acesso atual</span>
-          <strong>Leonardo · Operador</strong>
-          <span>Proprietário · Leitura</span>
+          <strong>Leonardo · Administrador</strong>
+          <span>Proprietário · Administrador</span>
         </div>
       </aside>
 
@@ -235,10 +235,10 @@ export default function Home() {
           </article>
           <article className="ownerCard">
             <p className="eyebrow lightEyebrow">Governança</p>
-            <h2>Proprietário em modo leitura</h2>
+            <h2>Administração compartilhada</h2>
             <p>
-              Acompanha pipeline, indicadores, metas e resultados sem alterar a
-              rotina operacional.
+              Leonardo e proprietário possuem acesso integral ao CRM, aos
+              indicadores e à rotina comercial.
             </p>
             <div className="ownerRule" />
             <small>

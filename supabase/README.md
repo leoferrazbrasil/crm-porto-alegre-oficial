@@ -13,10 +13,11 @@ Sem essas variáveis, `getSupabaseBrowserClient()` retorna `null` e a aplicaçã
 
 ## Perfis de acesso
 
-- `operator`: Leonardo, com permissão para criar e alterar leads, tarefas e eventos.
-- `viewer`: proprietário, com acesso de leitura aos dados da operação.
+- `admin`: Leonardo e proprietário, com acesso integral à operação comercial.
+- `operator`: papel legado compatível com as permissões administrativas.
+- `viewer`: acesso de leitura reservado para futuros acompanhantes.
 
-O primeiro perfil operador deve ser criado administrativamente após o cadastro do usuário. A `service_role` deve permanecer restrita ao ambiente seguro do Supabase.
+O primeiro perfil administrador deve ser criado após o convite do usuário no Supabase Auth. Chaves `sb_secret_` ou `service_role` devem permanecer restritas ao ambiente seguro do Supabase.
 
 ## Limites da V1
 
