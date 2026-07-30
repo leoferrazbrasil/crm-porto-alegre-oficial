@@ -5,6 +5,7 @@ import { getAuthRedirect, isAssetPath, isPublicAuthPath } from "./proxy";
 describe("auth proxy route decisions", () => {
   it("allows login and password routes without a session", () => {
     expect(isPublicAuthPath("/login")).toBe(true);
+    expect(isPublicAuthPath("/auth/callback")).toBe(true);
     expect(isPublicAuthPath("/auth/reset-password")).toBe(true);
     expect(isPublicAuthPath("/auth/update-password")).toBe(true);
   });

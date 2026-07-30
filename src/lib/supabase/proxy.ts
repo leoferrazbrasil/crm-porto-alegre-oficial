@@ -5,6 +5,7 @@ import { requireSupabaseConfig } from "./config";
 
 const PUBLIC_AUTH_PATHS = new Set([
   "/login",
+  "/auth/callback",
   "/auth/reset-password",
   "/auth/update-password"
 ]);

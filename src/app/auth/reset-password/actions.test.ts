@@ -31,7 +31,8 @@ describe("requestPasswordReset", () => {
         auth: {
           async resetPasswordForEmail(_email, options) {
             expect(options).toEqual({
-              redirectTo: "https://crm.example.com/auth/update-password"
+              redirectTo:
+                "https://crm.example.com/auth/callback?next=%2Fauth%2Fupdate-password"
             });
             return { error: null };
           }

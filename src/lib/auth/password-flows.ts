@@ -1,4 +1,5 @@
 import type { AuthFormState } from "./form-state";
+import { buildPasswordRecoveryRedirect } from "./callback";
 
 interface PasswordAuthClient {
   auth: {
@@ -70,7 +71,7 @@ export async function requestPasswordReset(
   }
 
   await client.auth.resetPasswordForEmail(normalizedEmail, {
-    redirectTo: `${origin}/auth/update-password`
+    redirectTo: buildPasswordRecoveryRedirect(origin)
   });
 
   return {
