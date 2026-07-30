@@ -1,16 +1,32 @@
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 import { getProfileDisplayName } from "@/lib/auth/access";
 import { requireCurrentAdmin } from "@/lib/auth/session";
-import { ProfilePasswordForm } from "./ProfilePasswordForm";
+import { getLeadById } from "@/lib/crm/leads-repository";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { LeadForm } from "../LeadForm";
 
-export default async function ProfilePage() {
+interface EditLeadPageProps {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
+export default async function EditLeadPage({ params }: EditLeadPageProps) {
+  const { id } = await params;
   const { profile, user } = await requireCurrentAdmin();
   const adminName = getProfileDisplayName(
     profile,
     user.email ?? "Administrador"
   );
+  const supabase = await createSupabaseServerClient();
+  const lead = await getLeadById(supabase, id);
+
+  if (!lead) {
+    notFound();
+  }
 
   return (
     <div className="appShell">
@@ -30,11 +46,11 @@ export default async function ProfilePage() {
             <span className="navDot" />
             Visão geral
           </Link>
-          <Link className="navItem" href="/leads">
+          <Link className="navItem navItemActive" href="/leads">
             <span className="navDot" />
             Leads
           </Link>
-          <Link className="navItem navItemActive" href="/perfil">
+          <Link className="navItem" href="/perfil">
             <span className="navDot" />
             Perfil
           </Link>
@@ -54,51 +70,24 @@ export default async function ProfilePage() {
         </div>
       </aside>
 
-      <main className="mainContent profileContent">
+      <main className="mainContent">
         <header className="pageHeader">
           <div>
-            <p className="eyebrow accentText">Conta do usuário</p>
-            <h1>Perfil administrativo</h1>
+            <p className="eyebrow accentText">Edição de oportunidade</p>
+            <h1>{lead.companyName}</h1>
             <p className="headerDescription">
-              Gerencie os dados básicos da sua conta e altere sua senha de
-              acesso ao CRM.
+              Atualize etapa, valores e próxima ação para manter a rotina
+              comercial sob controle.
             </p>
           </div>
           <div className="headerMeta">
-            <span>Sessão protegida</span>
-            <strong>{profile.role === "admin" ? "Administrador" : profile.role}</strong>
+            <span>Responsável</span>
+            <strong>{lead.owner}</strong>
           </div>
         </header>
 
-        <section className="profileGrid" aria-label="Dados do perfil">
-          <article className="profileCard">
-            <p className="eyebrow">Identificação</p>
-            <h2>{adminName}</h2>
-            <dl className="profileDetails">
-              <div>
-                <dt>E-mail</dt>
-                <dd>{user.email ?? "Não informado"}</dd>
-              </div>
-              <div>
-                <dt>Função</dt>
-                <dd>{profile.role === "admin" ? "Administrador" : profile.role}</dd>
-              </div>
-              <div>
-                <dt>Status</dt>
-                <dd>{profile.status === "active" ? "Ativo" : profile.status}</dd>
-              </div>
-            </dl>
-          </article>
-
-          <article className="profileCard">
-            <p className="eyebrow">Segurança</p>
-            <h2>Alterar senha</h2>
-            <p className="profileHelp">
-              A alteração será aplicada à conta autenticada no Supabase e a
-              sessão atual continuará ativa.
-            </p>
-            <ProfilePasswordForm />
-          </article>
+        <section className="sectionBlock">
+          <LeadForm lead={lead} mode="edit" />
         </section>
       </main>
       <div className="brandRuler" aria-hidden="true" />

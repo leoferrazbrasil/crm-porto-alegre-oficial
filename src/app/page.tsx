@@ -6,9 +6,11 @@ import {
   formatCurrency,
   formatShortDate
 } from "@/lib/crm/dashboard";
+import { listLeads } from "@/lib/crm/leads-repository";
 import { mockLeads, mockTasks } from "@/lib/crm/mock-data";
 import { getProfileDisplayName } from "@/lib/auth/access";
 import { requireCurrentAdmin } from "@/lib/auth/session";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const referenceDate = new Date("2026-07-30T15:00:00.000Z");
 
@@ -18,8 +20,14 @@ export default async function Home() {
     profile,
     user.email ?? "Administrador"
   );
+  const supabase = await createSupabaseServerClient();
+  const persistedLeads = await listLeads(supabase);
+  const leads = persistedLeads.length ? persistedLeads : mockLeads;
+  const dataLabel = persistedLeads.length
+    ? "Dados reais · sessão protegida"
+    : "Dados simulados · sessão protegida";
   const dashboard = buildDashboardViewModel(
-    mockLeads,
+    leads,
     mockTasks,
     referenceDate
   );
@@ -63,6 +71,10 @@ export default async function Home() {
             <span className="navDot" />
             Perfil
           </Link>
+          <Link className="navItem" href="/leads">
+            <span className="navDot" />
+            Leads
+          </Link>
         </nav>
 
         <div className="sidebarFooter">
@@ -90,7 +102,7 @@ export default async function Home() {
             </p>
           </div>
           <div className="headerMeta">
-            <span>Dados simulados · sessão protegida</span>
+            <span>{dataLabel}</span>
             <strong>30 de julho de 2026</strong>
           </div>
         </header>

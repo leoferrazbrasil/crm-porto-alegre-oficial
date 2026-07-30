@@ -611,7 +611,10 @@ td:first-child span {
   outline: none;
 }
 
-.authForm input:focus {
+.authForm input:focus,
+.leadForm input:focus,
+.leadForm select:focus,
+.leadForm textarea:focus {
   border-color: var(--pa-teal);
   box-shadow: 0 0 0 3px rgba(42, 98, 131, 0.12);
 }
@@ -725,6 +728,148 @@ td:first-child span {
 
 .profilePasswordForm {
   max-width: 420px;
+}
+
+.primaryLinkButton,
+.secondaryButton,
+.dangerButton {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  border-radius: 3px;
+  border: 0;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.primaryLinkButton {
+  color: var(--pa-white);
+  background: var(--pa-black-green);
+}
+
+.secondaryButton {
+  color: var(--pa-black-green);
+  background: rgba(121, 154, 82, 0.15);
+  border: 1px solid rgba(121, 154, 82, 0.28);
+}
+
+.dangerButton {
+  width: 100%;
+  color: var(--pa-white);
+  background: var(--pa-red);
+}
+
+.dangerButton:disabled,
+.primaryLinkButton:disabled,
+.secondaryButton:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.tableAction {
+  color: var(--pa-teal);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.emptyState {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+  padding: 32px;
+  background: var(--pa-surface-tint);
+  border: 1px dashed var(--pa-hairline);
+  border-radius: 4px;
+}
+
+.emptyState h3 {
+  margin: 0;
+  font: 700 22px/1.2 var(--font-display);
+  color: var(--pa-black);
+}
+
+.emptyState p {
+  max-width: 540px;
+  margin: 0;
+  color: var(--pa-graphite-60);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.leadFormLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 24px;
+  align-items: start;
+}
+
+.leadForm,
+.deleteLeadForm {
+  display: grid;
+  gap: 18px;
+}
+
+.leadForm label {
+  display: grid;
+  gap: 7px;
+  color: var(--pa-graphite);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.leadForm input,
+.leadForm select,
+.leadForm textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  color: var(--pa-graphite);
+  background: var(--pa-surface-tint);
+  border: 1px solid var(--pa-hairline);
+  border-radius: 3px;
+  outline: none;
+}
+
+.leadForm textarea {
+  resize: vertical;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.formActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.formActions .authButton {
+  min-width: 180px;
+}
+
+.deleteLeadForm {
+  padding: 22px;
+  color: var(--pa-white);
+  background: var(--pa-black-green);
+  border-radius: 4px;
+}
+
+.deleteLeadForm h2 {
+  margin-bottom: 0;
+  font: 700 22px/1.2 var(--font-display);
+  color: var(--pa-white);
+}
+
+.deleteLeadForm p:not(.eyebrow):not(.authMessage) {
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 12px;
+  line-height: 1.55;
 }
 
 @media (max-width: 1180px) {
