@@ -1,0 +1,45 @@
+:root {
+  --pa-white: #ffffff;
+  --pa-graphite: #2e2e2e;
+  --pa-black: #000000;
+  --pa-olive: #799a52;
+  --pa-red: #930d00;
+  --pa-teal: #2a6283;
+  --pa-rose: #985575;
+  --pa-black-green: #282e2a;
+  --pa-graphite-60: #2e2e2e99;
+  --pa-hairline: #e4e2de;
+  --pa-surface-tint: #f6f5f2;
+  --accent-ruler: linear-gradient(
+    90deg,
+    var(--pa-graphite) 0 20%,
+    var(--pa-olive) 20% 40%,
+    var(--pa-red) 40% 60%,
+    var(--pa-teal) 60% 80%,
+    var(--pa-rose) 80% 100%
+  );
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--pa-surface-tint);
+  color: var(--pa-graphite);
+  font-family: Inter, Arial, sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
