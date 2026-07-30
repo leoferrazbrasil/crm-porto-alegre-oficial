@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import {
   buildDashboardViewModel,
@@ -58,6 +59,10 @@ export default async function Home() {
             <span className="navDot" />
             Metas
           </a>
+          <Link className="navItem" href="/perfil">
+            <span className="navDot" />
+            Perfil
+          </Link>
         </nav>
 
         <div className="sidebarFooter">
