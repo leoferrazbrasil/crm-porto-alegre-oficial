@@ -1,4 +1,8 @@
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap");
+
 :root {
+  --font-display: "Archivo", Arial, sans-serif;
+  --font-body: "Inter", Arial, sans-serif;
   --pa-white: #ffffff;
   --pa-graphite: #2e2e2e;
   --pa-black: #000000;
@@ -30,7 +34,7 @@ body {
   min-height: 100%;
   background: var(--pa-surface-tint);
   color: var(--pa-graphite);
-  font-family: Inter, Arial, sans-serif;
+  font-family: var(--font-body);
 }
 
 button,
@@ -42,4 +46,567 @@ textarea {
 
 a {
   color: inherit;
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+.appShell {
+  min-height: 100vh;
+}
+
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 10;
+  width: 244px;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 20px 32px;
+  color: var(--pa-white);
+  background: var(--pa-black-green);
+}
+
+.logoChip {
+  width: 146px;
+  height: 138px;
+  display: grid;
+  place-items: center;
+  margin: 0 0 36px 12px;
+  background: var(--pa-white);
+  border-radius: 4px;
+}
+
+.logoChip img {
+  width: 140px;
+  height: 132px;
+  object-fit: contain;
+}
+
+.sidebar nav {
+  display: grid;
+  gap: 6px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 2px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.navItem:hover,
+.navItemActive {
+  color: var(--pa-white);
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.navDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.navItemActive .navDot {
+  background: var(--pa-olive);
+}
+
+.sidebarFooter {
+  display: grid;
+  gap: 8px;
+  margin-top: auto;
+  padding: 20px 12px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  font-size: 12px;
+}
+
+.sidebarFooter strong {
+  color: var(--pa-white);
+  font-size: 13px;
+}
+
+.sidebarFooter > span:last-child {
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.mainContent {
+  margin-left: 244px;
+  padding: 42px 44px 72px;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 40px;
+  margin: 0 auto 32px;
+  max-width: 1500px;
+}
+
+.eyebrow {
+  margin-bottom: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--pa-graphite-60);
+}
+
+.accentText {
+  color: var(--pa-teal);
+}
+
+.pageHeader h1 {
+  margin-bottom: 12px;
+  font: 700 clamp(32px, 4vw, 48px) / 1.08 var(--font-display);
+  letter-spacing: -0.02em;
+  color: var(--pa-black);
+}
+
+.headerDescription {
+  max-width: 720px;
+  margin-bottom: 0;
+  color: var(--pa-graphite-60);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.headerMeta {
+  display: grid;
+  gap: 8px;
+  min-width: 210px;
+  padding: 14px 0 14px 20px;
+  border-left: 2px solid var(--pa-graphite);
+  font-size: 12px;
+  text-align: left;
+}
+
+.headerMeta span {
+  color: var(--pa-graphite-60);
+}
+
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(150px, 1fr));
+  gap: 12px;
+  max-width: 1500px;
+  margin: 0 auto 24px;
+}
+
+.kpiCard,
+.sectionBlock,
+.goalCard {
+  background: var(--pa-white);
+  border: 1px solid var(--pa-hairline);
+  border-radius: 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.kpiCard {
+  min-height: 142px;
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
+}
+
+.kpiCard > span {
+  min-height: 34px;
+  color: var(--pa-graphite-60);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.kpiCard strong {
+  margin: 8px 0;
+  font: 700 25px/1 var(--font-display);
+  color: var(--pa-black);
+}
+
+.kpiCard small {
+  margin-top: auto;
+  color: var(--pa-graphite-60);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.kpiAttention {
+  border-top: 3px solid var(--pa-red);
+}
+
+.sectionBlock {
+  max-width: 1500px;
+  margin: 0 auto 24px;
+  padding: 24px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.sectionHeader h2,
+.taskPanel h2,
+.goalCard h2,
+.ownerCard h2 {
+  margin-bottom: 0;
+  font: 700 22px/1.2 var(--font-display);
+  color: var(--pa-black);
+}
+
+.sectionNote {
+  color: var(--pa-graphite-60);
+  font-size: 11px;
+}
+
+.pipelineGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.pipelineCard {
+  min-height: 116px;
+  display: flex;
+  flex-direction: column;
+  padding: 14px;
+  background: var(--pa-surface-tint);
+  border-left: 3px solid var(--pa-teal);
+  border-radius: 2px;
+}
+
+.pipelineCard:nth-child(4n + 2) {
+  border-left-color: var(--pa-olive);
+}
+
+.pipelineCard:nth-child(4n + 3) {
+  border-left-color: var(--pa-rose);
+}
+
+.pipelineCard:nth-child(4n + 4) {
+  border-left-color: var(--pa-red);
+}
+
+.stageIndex {
+  margin-bottom: 10px;
+  color: var(--pa-graphite-60);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.pipelineCard strong {
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.pipelineCard div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: auto;
+  color: var(--pa-graphite-60);
+  font-size: 10px;
+}
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 24px;
+  min-width: 0;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+.contentGrid > * {
+  min-width: 0;
+}
+
+.contentGrid .sectionBlock {
+  width: 100%;
+  margin: 0;
+}
+
+.tableWrap {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+th {
+  padding: 11px 10px;
+  border-bottom: 2px solid var(--pa-graphite);
+  color: var(--pa-graphite-60);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+td {
+  padding: 13px 10px;
+  border-bottom: 1px solid var(--pa-hairline);
+  vertical-align: top;
+}
+
+td:first-child {
+  min-width: 160px;
+}
+
+td:first-child strong,
+td:first-child span {
+  display: block;
+}
+
+td:first-child span {
+  margin-top: 4px;
+  color: var(--pa-graphite-60);
+  font-size: 10px;
+}
+
+.statusBadge,
+.priority {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.statusBadge {
+  color: var(--pa-teal);
+  background: rgba(42, 98, 131, 0.1);
+}
+
+.taskPanel,
+.ownerCard {
+  color: var(--pa-white);
+  background: var(--pa-black-green);
+  border-radius: 4px;
+}
+
+.taskPanel {
+  padding: 24px;
+}
+
+.taskPanel h2,
+.ownerCard h2 {
+  color: var(--pa-white);
+}
+
+.lightEyebrow {
+  color: rgba(255, 255, 255, 0.54);
+}
+
+.taskList {
+  display: grid;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.taskList article {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 2px;
+}
+
+.taskList strong {
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.taskList small {
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.priority {
+  width: fit-content;
+  color: var(--pa-black-green);
+  background: var(--pa-olive);
+}
+
+.priorityAlta {
+  color: var(--pa-white);
+  background: var(--pa-red);
+}
+
+.goalGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.15fr;
+  gap: 24px;
+  max-width: 1500px;
+  margin: 24px auto 0;
+}
+
+.goalCard,
+.ownerCard {
+  padding: 24px;
+}
+
+.goalCard ul {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  padding: 0;
+  margin: 22px 0 0;
+  list-style: none;
+}
+
+.goalCard li {
+  color: var(--pa-graphite-60);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.goalCard li strong {
+  display: block;
+  margin-bottom: 3px;
+  font: 700 22px/1 var(--font-display);
+  color: var(--pa-black);
+}
+
+.ownerCard p:not(.eyebrow) {
+  margin: 16px 0 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.ownerCard small {
+  display: block;
+  color: rgba(255, 255, 255, 0.52);
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.ownerRule {
+  width: 88px;
+  height: 5px;
+  margin: 22px 0 14px;
+  background: var(--pa-olive);
+}
+
+.brandRuler {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 244px;
+  z-index: 20;
+  height: 7px;
+  background: var(--accent-ruler);
+}
+
+@media (max-width: 1180px) {
+  .kpiGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .pipelineGrid {
+    grid-template-columns: repeat(2, minmax(170px, 1fr));
+  }
+
+  .contentGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .goalGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ownerCard {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 760px) {
+  .sidebar {
+    position: static;
+    width: 100%;
+    min-height: auto;
+    padding: 18px;
+  }
+
+  .logoChip {
+    width: 112px;
+    height: 104px;
+    margin: 0 0 18px;
+  }
+
+  .logoChip img {
+    width: 104px;
+    height: 98px;
+  }
+
+  .sidebar nav {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .sidebarFooter {
+    margin-top: 18px;
+  }
+
+  .mainContent {
+    margin-left: 0;
+    padding: 28px 18px 58px;
+  }
+
+  .pageHeader {
+    display: grid;
+  }
+
+  .headerMeta {
+    border-left: 0;
+    border-top: 2px solid var(--pa-graphite);
+    padding: 14px 0 0;
+  }
+
+  .kpiGrid,
+  .goalGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .pipelineGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .ownerCard {
+    grid-column: auto;
+  }
+
+  .brandRuler {
+    left: 0;
+  }
+}
+
+@media (max-width: 430px) {
+  .sidebar nav {
+    grid-template-columns: 1fr;
+  }
+
+  .sectionHeader {
+    display: grid;
+  }
 }
