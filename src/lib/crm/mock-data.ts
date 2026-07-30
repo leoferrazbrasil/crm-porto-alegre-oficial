@@ -1,0 +1,193 @@
+import type { CommercialTask, Lead } from "./types";
+
+export const mockLeads: Lead[] = [
+  {
+    id: "lead-001",
+    companyName: "Restaurante Orla",
+    contactName: "Ana Martins",
+    segment: "Gastronomia",
+    source: "Prospecção ativa",
+    stage: "Proposta enviada",
+    owner: "Leonardo",
+    estimatedValue: 12_000,
+    recurringValue: 2_000,
+    probability: 60,
+    nextAction: "Retomar proposta comercial",
+    nextActionAt: "2026-07-31T14:00:00.000Z",
+    createdAt: "2026-07-20T12:00:00.000Z",
+    updatedAt: "2026-07-29T12:00:00.000Z"
+  },
+  {
+    id: "lead-002",
+    companyName: "Hotel Centro Histórico",
+    contactName: "Bruno Leal",
+    segment: "Turismo",
+    source: "Indicação",
+    stage: "Negociação",
+    owner: "Leonardo",
+    estimatedValue: 18_000,
+    recurringValue: 3_000,
+    probability: 80,
+    nextAction: "Validar calendário da campanha",
+    nextActionAt: "2026-08-01T15:00:00.000Z",
+    createdAt: "2026-07-18T12:00:00.000Z",
+    updatedAt: "2026-07-30T12:00:00.000Z"
+  },
+  {
+    id: "lead-003",
+    companyName: "Clínica Moinhos",
+    contactName: "Carla Torres",
+    segment: "Saúde",
+    source: "Inbound",
+    stage: "Diagnóstico",
+    owner: "Leonardo",
+    estimatedValue: 9_000,
+    probability: 40,
+    nextAction: "Concluir diagnóstico comercial",
+    nextActionAt: "2026-07-30T18:00:00.000Z",
+    createdAt: "2026-07-24T12:00:00.000Z",
+    updatedAt: "2026-07-29T12:00:00.000Z"
+  },
+  {
+    id: "lead-004",
+    companyName: "Construtora Guaíba",
+    contactName: "Daniela Rocha",
+    segment: "Imobiliário",
+    source: "Prospecção ativa",
+    stage: "Qualificado",
+    owner: "Leonardo",
+    estimatedValue: 15_000,
+    probability: 30,
+    nextAction: "Agendar reunião de diagnóstico",
+    nextActionAt: "2026-07-31T16:00:00.000Z",
+    createdAt: "2026-07-26T12:00:00.000Z",
+    updatedAt: "2026-07-29T12:00:00.000Z"
+  },
+  {
+    id: "lead-005",
+    companyName: "Festival Cidade Baixa",
+    contactName: "Eduardo Lima",
+    segment: "Eventos",
+    source: "Instagram",
+    instagramProfile: "@festivalcidadebaixa",
+    stage: "Engajado",
+    owner: "Leonardo",
+    estimatedValue: 7_500,
+    probability: 20,
+    nextAction: "Confirmar interesse por e-mail",
+    nextActionAt: "2026-08-02T13:00:00.000Z",
+    createdAt: "2026-07-27T12:00:00.000Z",
+    updatedAt: "2026-07-30T12:00:00.000Z"
+  },
+  {
+    id: "lead-006",
+    companyName: "Mercado Bom Fim",
+    contactName: "Fernanda Alves",
+    segment: "Varejo",
+    source: "Prospecção ativa",
+    stage: "Contato iniciado",
+    owner: "Leonardo",
+    estimatedValue: 6_000,
+    probability: 10,
+    nextAction: "Realizar segundo contato",
+    nextActionAt: "2026-07-30T11:00:00.000Z",
+    createdAt: "2026-07-28T12:00:00.000Z",
+    updatedAt: "2026-07-29T12:00:00.000Z"
+  },
+  {
+    id: "lead-007",
+    companyName: "Escola Zona Sul",
+    contactName: "Gabriel Freitas",
+    segment: "Educação",
+    source: "Prospecção ativa",
+    stage: "Mapeado",
+    owner: "Leonardo",
+    estimatedValue: 8_000,
+    probability: 5,
+    nextAction: "Identificar decisor comercial",
+    nextActionAt: "2026-08-03T12:00:00.000Z",
+    createdAt: "2026-07-30T10:00:00.000Z",
+    updatedAt: "2026-07-30T10:00:00.000Z"
+  },
+  {
+    id: "lead-008",
+    companyName: "Parque Tecnológico RS",
+    contactName: "Helena Costa",
+    segment: "Tecnologia",
+    source: "Evento",
+    stage: "Solução apresentada",
+    owner: "Leonardo",
+    estimatedValue: 22_000,
+    probability: 50,
+    nextAction: "Enviar composição final da solução",
+    nextActionAt: "2026-08-01T18:00:00.000Z",
+    createdAt: "2026-07-15T12:00:00.000Z",
+    updatedAt: "2026-07-29T12:00:00.000Z"
+  },
+  {
+    id: "lead-009",
+    companyName: "Academia Independência",
+    contactName: "Igor Melo",
+    segment: "Bem-estar",
+    source: "Indicação",
+    stage: "Fechado ganho",
+    owner: "Leonardo",
+    estimatedValue: 10_000,
+    recurringValue: 1_800,
+    probability: 100,
+    nextAction: "Iniciar plano de entrega",
+    nextActionAt: "2026-08-01T12:00:00.000Z",
+    createdAt: "2026-07-05T12:00:00.000Z",
+    updatedAt: "2026-07-30T12:00:00.000Z"
+  },
+  {
+    id: "lead-010",
+    companyName: "Loja República",
+    contactName: "Juliana Pires",
+    segment: "Varejo",
+    source: "Prospecção ativa",
+    stage: "Fechado perdido",
+    owner: "Leonardo",
+    estimatedValue: 5_000,
+    probability: 0,
+    nextAction: "Registrar aprendizado",
+    nextActionAt: "2026-07-29T12:00:00.000Z",
+    createdAt: "2026-07-08T12:00:00.000Z",
+    updatedAt: "2026-07-28T12:00:00.000Z",
+    lossReason: "Sem prioridade no trimestre"
+  }
+];
+
+export const mockTasks: CommercialTask[] = [
+  {
+    id: "task-001",
+    leadId: "lead-003",
+    title: "Concluir diagnóstico da Clínica Moinhos",
+    dueAt: "2026-07-30T18:00:00.000Z",
+    priority: "Alta",
+    completed: false
+  },
+  {
+    id: "task-002",
+    leadId: "lead-001",
+    title: "Retomar proposta do Restaurante Orla",
+    dueAt: "2026-07-31T14:00:00.000Z",
+    priority: "Alta",
+    completed: false
+  },
+  {
+    id: "task-003",
+    leadId: "lead-002",
+    title: "Validar calendário com Hotel Centro Histórico",
+    dueAt: "2026-08-01T15:00:00.000Z",
+    priority: "Média",
+    completed: false
+  },
+  {
+    id: "task-004",
+    title: "Revisar perdas e aprendizados da semana",
+    dueAt: "2026-07-31T19:00:00.000Z",
+    priority: "Média",
+    completed: false
+  }
+];
