@@ -6,10 +6,17 @@ import {
   formatShortDate
 } from "@/lib/crm/dashboard";
 import { mockLeads, mockTasks } from "@/lib/crm/mock-data";
+import { getProfileDisplayName } from "@/lib/auth/access";
+import { requireCurrentAdmin } from "@/lib/auth/session";
 
 const referenceDate = new Date("2026-07-30T15:00:00.000Z");
 
-export default function Home() {
+export default async function Home() {
+  const { profile, user } = await requireCurrentAdmin();
+  const adminName = getProfileDisplayName(
+    profile,
+    user.email ?? "Administrador"
+  );
   const dashboard = buildDashboardViewModel(
     mockLeads,
     mockTasks,
@@ -55,8 +62,13 @@ export default function Home() {
 
         <div className="sidebarFooter">
           <span className="eyebrow">Acesso atual</span>
-          <strong>Leonardo · Administrador</strong>
-          <span>Proprietário · Administrador</span>
+          <strong>{adminName}</strong>
+          <span>Administrador do CRM</span>
+          <form action="/auth/sign-out" method="post">
+            <button className="signOutButton" type="submit">
+              Sair
+            </button>
+          </form>
         </div>
       </aside>
 
@@ -71,7 +83,7 @@ export default function Home() {
             </p>
           </div>
           <div className="headerMeta">
-            <span>Dados simulados · V1 local</span>
+            <span>Dados simulados · sessão protegida</span>
             <strong>30 de julho de 2026</strong>
           </div>
         </header>

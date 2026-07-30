@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { resolveSupabaseConfig } from "./config";
+import { requireSupabaseConfig, resolveSupabaseConfig } from "./config";
 
 describe("resolveSupabaseConfig", () => {
-  it("retorna null quando a configuração pública está incompleta", () => {
+  it("returns null when the publishable key is missing", () => {
     expect(
       resolveSupabaseConfig({
         url: "https://example.supabase.co",
@@ -12,7 +12,7 @@ describe("resolveSupabaseConfig", () => {
     ).toBeNull();
   });
 
-  it("normaliza a configuração com a chave publicável atual", () => {
+  it("normalizes the url and publishable key", () => {
     expect(
       resolveSupabaseConfig({
         url: " https://example.supabase.co/ ",
@@ -24,7 +24,7 @@ describe("resolveSupabaseConfig", () => {
     });
   });
 
-  it("mantém compatibilidade com a variável anon legada", () => {
+  it("keeps compatibility with the legacy anon key variable", () => {
     expect(
       resolveSupabaseConfig({
         url: "https://example.supabase.co",
@@ -34,5 +34,16 @@ describe("resolveSupabaseConfig", () => {
       url: "https://example.supabase.co",
       publishableKey: "legacy-anon-key"
     });
+  });
+});
+
+describe("requireSupabaseConfig", () => {
+  it("throws a clear setup error when public config is incomplete", () => {
+    expect(() =>
+      requireSupabaseConfig({
+        url: "https://example.supabase.co",
+        publishableKey: ""
+      })
+    ).toThrow("Supabase public environment is not configured");
   });
 });

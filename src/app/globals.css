@@ -141,6 +141,21 @@ p {
   color: rgba(255, 255, 255, 0.58);
 }
 
+.signOutButton {
+  width: 100%;
+  min-height: 34px;
+  margin-top: 6px;
+  color: var(--pa-white);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.signOutButton:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
 .mainContent {
   margin-left: 244px;
   padding: 42px 44px 72px;
@@ -517,6 +532,112 @@ td:first-child span {
   z-index: 20;
   height: 7px;
   background: var(--accent-ruler);
+}
+
+.authPage {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px 18px;
+  background: var(--pa-surface-tint);
+}
+
+.authPanel {
+  width: min(100%, 420px);
+  padding: 32px;
+  background: var(--pa-white);
+  border: 1px solid var(--pa-hairline);
+  border-radius: 4px;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.08);
+}
+
+.authPanel img {
+  width: 96px;
+  height: auto;
+  margin-bottom: 22px;
+}
+
+.authPanel h1 {
+  margin-bottom: 10px;
+  font: 700 32px/1.1 var(--font-display);
+  color: var(--pa-black);
+}
+
+.authPanel p:not(.eyebrow):not(.authMessage) {
+  color: var(--pa-graphite-60);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.authForm {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.authForm label {
+  display: grid;
+  gap: 7px;
+  color: var(--pa-graphite);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.authForm input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  color: var(--pa-graphite);
+  background: var(--pa-surface-tint);
+  border: 1px solid var(--pa-hairline);
+  border-radius: 3px;
+  outline: none;
+}
+
+.authForm input:focus {
+  border-color: var(--pa-teal);
+  box-shadow: 0 0 0 3px rgba(42, 98, 131, 0.12);
+}
+
+.authButton {
+  min-height: 46px;
+  color: var(--pa-white);
+  background: var(--pa-black-green);
+  border: 0;
+  border-radius: 3px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.authButton:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.authMessage {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 3px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.authMessageerror {
+  color: var(--pa-red);
+  background: rgba(147, 13, 0, 0.08);
+}
+
+.authMessagesuccess {
+  color: var(--pa-black-green);
+  background: rgba(121, 154, 82, 0.16);
+}
+
+.authLink {
+  display: inline-flex;
+  margin-top: 18px;
+  color: var(--pa-teal);
+  font-size: 13px;
+  font-weight: 700;
 }
 
 @media (max-width: 1180px) {

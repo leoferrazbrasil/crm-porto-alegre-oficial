@@ -1,31 +1,9 @@
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
-export interface SupabasePublicEnvironment {
-  url?: string;
-  publishableKey?: string;
-  anonKey?: string;
-}
-
-export interface SupabasePublicConfig {
-  url: string;
-  publishableKey: string;
-}
+import { resolveSupabaseConfig } from "./config";
 
 let browserClient: SupabaseClient | null = null;
-
-export function resolveSupabaseConfig(
-  environment: SupabasePublicEnvironment
-): SupabasePublicConfig | null {
-  const url = environment.url?.trim().replace(/\/+$/, "");
-  const publishableKey =
-    environment.publishableKey?.trim() || environment.anonKey?.trim();
-
-  if (!url || !publishableKey) {
-    return null;
-  }
-
-  return { url, publishableKey };
-}
 
 export function getSupabaseBrowserClient(): SupabaseClient | null {
   const config = resolveSupabaseConfig({
@@ -38,6 +16,6 @@ export function getSupabaseBrowserClient(): SupabaseClient | null {
     return null;
   }
 
-  browserClient ??= createClient(config.url, config.publishableKey);
+  browserClient ??= createBrowserClient(config.url, config.publishableKey);
   return browserClient;
 }
