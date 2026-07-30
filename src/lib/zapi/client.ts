@@ -29,11 +29,38 @@ export type ZapiQrCodeResult =
   | {
       ok: false;
       message: string;
+  };
+
+export interface ZapiChat {
+  phone: string;
+  name: string;
+  archived: boolean;
+  pinned: boolean;
+  unread: number;
+  messagesUnread: number;
+  lastMessageAt: string | null;
+  isMuted: boolean;
+  isMarkedSpam: boolean;
+  isGroup: boolean;
+  isGroupAnnouncement: boolean;
+}
+
+export type ZapiChatsResult =
+  | {
+      ok: true;
+      chats: ZapiChat[];
+      page: number;
+      pageSize: number;
+    }
+  | {
+      ok: false;
+      message: string;
     };
 
 export interface ZapiClient {
   getStatus(): Promise<ZapiStatusResult>;
   getQrCodeImage(): Promise<ZapiQrCodeResult>;
+  getChats(page?: number, pageSize?: number): Promise<ZapiChatsResult>;
 }
 
 type ZapiFetcher = typeof fetch;
@@ -106,6 +133,34 @@ export function createZapiClient(
         type: "image",
         imageBase64
       };
+    },
+
+    async getChats(page = 1, pageSize = 20) {
+      const response = await callZapi(
+        config,
+        fetcher,
+        `chats?page=${page}&pageSize=${pageSize}`
+      );
+
+      if (!response.ok) {
+        return safeError();
+      }
+
+      const data = (await response.json()) as unknown;
+      const rows = Array.isArray(data)
+        ? data
+        : data && typeof data === "object" && "chats" in data
+          ? (data as { chats?: unknown }).chats
+          : [];
+
+      return {
+        ok: true,
+        chats: Array.isArray(rows)
+          ? rows.map((row) => normalizeChat(row as Record<string, unknown>))
+          : [],
+        page,
+        pageSize
+      };
     }
   };
 }
@@ -113,7 +168,7 @@ export function createZapiClient(
 function callZapi(
   config: ZapiConfig,
   fetcher: ZapiFetcher,
-  path: "status" | "qr-code/image"
+  path: string
 ) {
   return fetcher(
     `${ZAPI_BASE_URL}/instances/${config.instanceId}/token/${config.instanceToken}/${path}`,
@@ -125,7 +180,53 @@ function callZapi(
   );
 }
 
-function safeError(): ZapiStatusResult & ZapiQrCodeResult {
+function normalizeChat(row: Record<string, unknown>): ZapiChat {
+  return {
+    phone: stringFromZapi(row.phone),
+    name: stringFromZapi(row.name) || stringFromZapi(row.phone),
+    archived: booleanFromZapi(row.archived),
+    pinned: booleanFromZapi(row.pinned),
+    unread: numberFromZapi(row.unread),
+    messagesUnread: numberFromZapi(row.messagesUnread),
+    lastMessageAt: timestampSecondsToIso(row.lastMessageTime),
+    isMuted: booleanFromZapi(row.isMuted),
+    isMarkedSpam: booleanFromZapi(row.isMarkedSpam),
+    isGroup: booleanFromZapi(row.isGroup),
+    isGroupAnnouncement: booleanFromZapi(row.isGroupAnnouncement)
+  };
+}
+
+function stringFromZapi(value: unknown): string {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function booleanFromZapi(value: unknown): boolean {
+  if (typeof value === "boolean") {
+    return value;
+  }
+
+  if (typeof value === "number") {
+    return value !== 0;
+  }
+
+  if (typeof value === "string") {
+    return ["true", "1", "yes"].includes(value.trim().toLowerCase());
+  }
+
+  return false;
+}
+
+function numberFromZapi(value: unknown): number {
+  const parsed = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function timestampSecondsToIso(value: unknown): string | null {
+  const seconds = numberFromZapi(value);
+  return seconds > 0 ? new Date(seconds * 1000).toISOString() : null;
+}
+
+function safeError(): ZapiStatusResult & ZapiQrCodeResult & ZapiChatsResult {
   return {
     ok: false,
     message: ZAPI_SAFE_ERROR

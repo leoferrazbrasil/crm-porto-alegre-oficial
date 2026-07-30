@@ -34,6 +34,10 @@ export default async function WhatsAppIntegrationPage() {
             <span className="navDot" />
             Leads
           </Link>
+          <Link className="navItem" href="/conversas">
+            <span className="navDot" />
+            Conversas
+          </Link>
           <Link className="navItem navItemActive" href="/integracoes/whatsapp">
             <span className="navDot" />
             WhatsApp

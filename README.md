@@ -8,6 +8,7 @@ Primeira versão operacional local do CRM comercial da Porto Alegre Oficial.
 - A aplicação usa Supabase para autenticação, perfil e CRUD de leads.
 - O dashboard usa leads reais quando existirem e dados simulados como fallback visual.
 - Existe integração V1 com Z-API apenas para status da instância e conexão por QR Code.
+- A página `/conversas` exibe a lista de chats da instância conectada em modo somente leitura.
 - Não existe integração direta com Instagram, automação de mensagens ou publicação.
 
 ## Executar localmente
@@ -64,11 +65,22 @@ ZAPI_CLIENT_TOKEN=
 Essas variáveis não podem usar prefixo `NEXT_PUBLIC_` e nunca devem ser
 expostas no navegador.
 
+## Caixa de entrada do WhatsApp
+
+`/conversas` consulta `GET /api/zapi/chats` no servidor e apresenta nome,
+telefone, última interação, contagem de não lidas e flags operacionais. A V1
+não envia mensagens, não marca chats como lidos, não arquiva e não exclui.
+
+A resposta de chats é uma lista resumida da Z-API, não uma linha do tempo
+completa. O histórico persistido será uma etapa posterior com webhooks de
+mensagens recebidas e armazenamento idempotente no Supabase, após revisão de
+retenção e permissões.
+
 ## Segurança operacional
 
 - Contas críticas do Instagram não são conectadas nesta versão.
 - Leads originados no Instagram são registrados manualmente.
 - WhatsApp proativo exige opt-in auditável e aprovação separada.
-- A integração Z-API V1 não envia mensagens, não dispara campanhas e não lê conversas.
+- A integração Z-API V1 não envia mensagens, não dispara campanhas e apenas consulta a lista de chats em modo leitura.
 - Toda oportunidade deve possuir responsável, próxima ação e data.
 - O motivo de perda é obrigatório para negócios perdidos.

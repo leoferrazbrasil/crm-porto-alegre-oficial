@@ -27,10 +27,10 @@
 - Produces `ZapiClient.getChats(page?: number, pageSize?: number): Promise<ZapiChatsResult>`.
 - `ZapiChatsResult` retorna `{ ok: true, chats, page, pageSize }` ou `{ ok: false, message }`.
 
-- [ ] **Step 1: Escrever testes falhando** para URL/query/header, normalização de flags/timestamp e erro seguro.
-- [ ] **Step 2: Executar `npm test -- src/lib/zapi/client.test.ts` e confirmar falha pela ausência de `getChats`.
-- [ ] **Step 3: Implementar tipos, conversão de valores Z-API e `getChats` mínimo.
-- [ ] **Step 4: Executar o teste focado e confirmar aprovação.
+- [x] **Step 1: Escrever testes falhando** para URL/query/header, normalização de flags/timestamp e erro seguro.
+- [x] **Step 2: Executar `npm test -- src/lib/zapi/client.test.ts` e confirmar falha pela ausência de `getChats`.
+- [x] **Step 3: Implementar tipos, conversão de valores Z-API e `getChats` mínimo.
+- [x] **Step 4: Executar o teste focado e confirmar aprovação.
 
 ### Task 2: Rota autenticada de chats
 
@@ -41,10 +41,10 @@
 **Interfaces:**
 - `GET /api/zapi/chats?page=1&pageSize=50` exige `requireCurrentAdmin`, valida paginação, lê `readZapiConfig` e chama `createZapiClient`.
 
-- [ ] **Step 1: Escrever teste de contrato para defaults/limite de paginação e erro sem credenciais.
-- [ ] **Step 2: Confirmar o teste falhando antes da implementação.
-- [ ] **Step 3: Implementar a rota com status 200, 400 e 502 seguros.
-- [ ] **Step 4: Executar testes focados e confirmar aprovação.
+- [x] **Step 1: Escrever teste de contrato para defaults/limite de paginação e erro sem credenciais.
+- [x] **Step 2: Confirmar o teste falhando antes da implementação.
+- [x] **Step 3: Implementar a rota com status 200, 400 e 502 seguros.
+- [x] **Step 4: Executar testes focados e confirmar aprovação.
 
 ### Task 3: Inbox protegida e navegação
 
@@ -57,15 +57,15 @@
 **Interfaces:**
 - O painel cliente consome somente `/api/zapi/chats`, apresenta estados loading/erro/vazio e filtros locais.
 
-- [ ] **Step 1: Implementar painel e página com a identidade visual existente.
-- [ ] **Step 2: Adicionar navegação consistente e estilos responsivos.
-- [ ] **Step 3: Executar lint/build e revisar que não há ação de envio/mutação.
+- [x] **Step 1: Implementar painel e página com a identidade visual existente.
+- [x] **Step 2: Adicionar navegação consistente e estilos responsivos.
+- [x] **Step 3: Executar lint/build e revisar que não há ação de envio/mutação.
 
 ### Task 4: Documentação e entrega
 
 **Files:**
 - Modify: `README.md`
 
-- [ ] **Step 1: Documentar endpoint interno, escopo somente leitura e próxima etapa de webhook.
-- [ ] **Step 2: Executar `npm test`, `npm run lint` e `npm run build` completos.
+- [x] **Step 1: Documentar endpoint interno, escopo somente leitura e próxima etapa de webhook.
+- [x] **Step 2: Executar `npm test`, `npm run lint` e `npm run build` completos.
 - [ ] **Step 3: Revisar `git diff`, fazer commit `feat: exibir conversas whatsapp zapi` e push para `origin main`.

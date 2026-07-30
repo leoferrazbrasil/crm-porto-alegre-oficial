@@ -993,6 +993,159 @@ td:first-child span {
   line-height: 1.5;
 }
 
+.inboxPanel {
+  display: grid;
+  gap: 22px;
+}
+
+.inboxIntro {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--pa-hairline);
+}
+
+.inboxIntro h2 {
+  margin-bottom: 10px;
+  font: 700 24px/1.15 var(--font-display);
+  color: var(--pa-black);
+}
+
+.inboxIntro p:not(.eyebrow) {
+  max-width: 720px;
+  margin-bottom: 0;
+  color: var(--pa-graphite-60);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.inboxFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.inboxFilterButton {
+  min-height: 34px;
+  padding: 0 12px;
+  color: var(--pa-graphite-60);
+  background: var(--pa-surface-tint);
+  border: 1px solid var(--pa-hairline);
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.inboxFilterButton:hover,
+.inboxFilterButtonActive {
+  color: var(--pa-white);
+  background: var(--pa-black-green);
+  border-color: var(--pa-black-green);
+}
+
+.inboxState {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+  padding: 30px;
+  color: var(--pa-graphite-60);
+  background: var(--pa-surface-tint);
+  border: 1px dashed var(--pa-hairline);
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.inboxState strong {
+  color: var(--pa-black);
+  font-size: 16px;
+}
+
+.inboxStateError {
+  color: var(--pa-red);
+  background: rgba(147, 13, 0, 0.06);
+  border-color: rgba(147, 13, 0, 0.22);
+}
+
+.inboxStateError strong {
+  color: var(--pa-red);
+}
+
+.inboxTableWrap {
+  border: 1px solid var(--pa-hairline);
+  border-radius: 4px;
+}
+
+.inboxTable {
+  min-width: 760px;
+}
+
+.inboxTable td:first-child {
+  min-width: 210px;
+}
+
+.inboxTable td:first-child strong,
+.inboxTable td:first-child span {
+  display: block;
+}
+
+.inboxTable td:first-child span {
+  margin-top: 5px;
+  color: var(--pa-graphite-60);
+  font-size: 11px;
+}
+
+.inboxUnread,
+.inboxRead {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  min-height: 24px;
+  padding: 0 6px;
+  margin-top: 0 !important;
+  border-radius: 8px;
+  font-size: 11px !important;
+  font-weight: 700;
+}
+
+.inboxUnread {
+  color: var(--pa-white) !important;
+  background: var(--pa-red);
+}
+
+.inboxRead {
+  color: var(--pa-graphite-60) !important;
+  background: var(--pa-surface-tint);
+}
+
+.inboxFlags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.inboxFlags span {
+  display: inline-flex !important;
+  width: fit-content;
+  padding: 4px 7px;
+  margin-top: 0 !important;
+  color: var(--pa-teal) !important;
+  background: rgba(42, 98, 131, 0.08);
+  border-radius: 8px;
+  font-size: 10px !important;
+  font-weight: 700;
+}
+
+.inboxReadOnly {
+  color: var(--pa-graphite-60) !important;
+  font-size: 10px !important;
+  white-space: nowrap;
+}
+
 @media (max-width: 1180px) {
   .kpiGrid {
     grid-template-columns: repeat(3, 1fr);
@@ -1012,6 +1165,10 @@ td:first-child span {
 
   .profileGrid {
     grid-template-columns: 1fr;
+  }
+
+  .inboxTableWrap {
+    overflow-x: auto;
   }
 
   .ownerCard {
@@ -1052,6 +1209,10 @@ td:first-child span {
   }
 
   .pageHeader {
+    display: grid;
+  }
+
+  .inboxIntro {
     display: grid;
   }
 

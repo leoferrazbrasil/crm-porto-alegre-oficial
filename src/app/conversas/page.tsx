@@ -3,9 +3,9 @@ import Link from "next/link";
 
 import { getProfileDisplayName } from "@/lib/auth/access";
 import { requireCurrentAdmin } from "@/lib/auth/session";
-import { LeadForm } from "../LeadForm";
+import { WhatsAppInboxPanel } from "./WhatsAppInboxPanel";
 
-export default async function NewLeadPage() {
+export default async function ConversationsPage() {
   const { profile, user } = await requireCurrentAdmin();
   const adminName = getProfileDisplayName(
     profile,
@@ -30,11 +30,11 @@ export default async function NewLeadPage() {
             <span className="navDot" />
             Visão geral
           </Link>
-          <Link className="navItem navItemActive" href="/leads">
+          <Link className="navItem" href="/leads">
             <span className="navDot" />
             Leads
           </Link>
-          <Link className="navItem" href="/conversas">
+          <Link className="navItem navItemActive" href="/conversas">
             <span className="navDot" />
             Conversas
           </Link>
@@ -65,17 +65,21 @@ export default async function NewLeadPage() {
       <main className="mainContent">
         <header className="pageHeader">
           <div>
-            <p className="eyebrow accentText">Novo cadastro</p>
-            <h1>Cadastrar lead</h1>
+            <p className="eyebrow accentText">Atendimento comercial</p>
+            <h1>Conversas iniciadas pelos leads</h1>
             <p className="headerDescription">
-              Registre uma oportunidade comercial com origem, etapa, valor,
-              probabilidade e próxima ação definida.
+              Acompanhe os chats do WhatsApp conectado ao tráfego pago em uma
+              visão operacional somente leitura.
             </p>
+          </div>
+          <div className="headerMeta">
+            <span>WhatsApp via Z-API</span>
+            <strong>V1 · somente leitura</strong>
           </div>
         </header>
 
         <section className="sectionBlock">
-          <LeadForm mode="create" />
+          <WhatsAppInboxPanel />
         </section>
       </main>
       <div className="brandRuler" aria-hidden="true" />
