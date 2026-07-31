@@ -157,6 +157,44 @@ describe("createZapiClient", () => {
     ]);
   });
 
+  it("sends a text message with server-side credentials", async () => {
+    const calls: Array<{ url: string; init: RequestInit | undefined }> = [];
+    const client = createZapiClient(
+      {
+        instanceId: "instance-1",
+        instanceToken: "token-1",
+        clientToken: "client-token-1"
+      },
+      async (url, init) => {
+        calls.push({ url: String(url), init });
+        return jsonResponse({
+          zaapId: "zaap-1",
+          messageId: "message-1",
+          id: "message-1"
+        });
+      }
+    );
+
+    await expect(client.sendText("5511999999999", "Olá, lead")).resolves.toEqual({
+      ok: true,
+      zaapId: "zaap-1",
+      messageId: "message-1"
+    });
+    expect(calls).toEqual([
+      {
+        url: "https://api.z-api.io/instances/instance-1/token/token-1/send-text",
+        init: {
+          method: "POST",
+          headers: {
+            "Client-Token": "client-token-1",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ phone: "5511999999999", message: "Olá, lead" })
+        }
+      }
+    ]);
+  });
+
   it("normalizes Z-API chat flags and epoch seconds for the inbox", async () => {
     const client = createZapiClient(
       {
