@@ -34,6 +34,9 @@ describe("buildDashboardViewModel", () => {
       negotiations: 2,
       wonDeals: 1,
       lostDeals: 1,
+      salesClosed: 1,
+      revenueGenerated: 22000,
+      averageTicket: 22000,
       awaitingFirstResponse: 3,
       medianFirstResponseMinutes: 18,
       rates: {
@@ -43,7 +46,10 @@ describe("buildDashboardViewModel", () => {
         negotiation: 50,
         win: 50,
         loss: 50,
-        final: 8.333333333333332
+        final: 8.333333333333332,
+        conversationToNegotiation: 16.666666666666664,
+        negotiationToSale: 50,
+        conversationToSale: 8.333333333333332
       }
     } satisfies FunnelMetrics;
 

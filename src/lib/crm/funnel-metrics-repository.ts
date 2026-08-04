@@ -19,7 +19,7 @@ export async function getFunnelMetrics(
       client
         .from("whatsapp_conversations")
         .select("id, qualification_status, lead_id, created_at"),
-      client.from("leads").select("id, stage"),
+      client.from("leads").select("id, stage, estimated_value"),
       client
         .from("crm_funnel_events")
         .select(
@@ -42,9 +42,10 @@ export async function getFunnelMetrics(
           })),
       leads: leadsResult.error
         ? []
-        : (leadsResult.data ?? []).map((row) => ({
+          : (leadsResult.data ?? []).map((row) => ({
             id: stringValue(row.id),
-            stage: stringValue(row.stage)
+            stage: stringValue(row.stage),
+            estimatedValue: numberValue(row.estimated_value)
           })),
       events: eventsResult.error
         ? []
@@ -88,4 +89,9 @@ function mapEvent(row: Record<string, unknown>): FunnelEvent[] {
 
 function stringValue(value: unknown): string {
   return typeof value === "string" ? value : String(value ?? "");
+}
+
+function numberValue(value: unknown): number {
+  const parsed = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
 }

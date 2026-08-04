@@ -5,11 +5,14 @@ import {
 } from "@/lib/crm/dashboard";
 import { listLeads } from "@/lib/crm/leads-repository";
 import { getFunnelMetrics } from "@/lib/crm/funnel-metrics-repository";
+import { calculateTargetPacing } from "@/lib/crm/target-pacing";
+import { getMonthlyRevenueTarget } from "@/lib/crm/targets-repository";
 import { mockLeads, mockTasks } from "@/lib/crm/mock-data";
 import { getProfileDisplayName } from "@/lib/auth/access";
 import { requireCurrentAdmin } from "@/lib/auth/session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { CrmSidebar } from "@/components/crm/CrmSidebar";
+import { MonthlyRevenueTargetForm } from "./MonthlyRevenueTargetForm";
 
 export default async function Home() {
   const { profile, user } = await requireCurrentAdmin();
@@ -21,7 +24,10 @@ export default async function Home() {
   const persistedLeads = await listLeads(supabase);
   const referenceDate = new Date();
   const period = currentMonthPeriod(referenceDate);
+  const monthStart = currentMonthStart(referenceDate);
   const funnelMetrics = await getFunnelMetrics(supabase, period);
+  const monthlyTarget = await getMonthlyRevenueTarget(supabase, monthStart);
+  const targetPacing = calculateTargetPacing(funnelMetrics, monthlyTarget, period);
   const leads = persistedLeads.length ? persistedLeads : mockLeads;
   const dataLabel = persistedLeads.length
     ? "Dados reais · sessão protegida"
@@ -89,42 +95,69 @@ export default async function Home() {
           </article>
         </section>
 
-        <section className="sectionBlock funnelMetricsBlock" aria-label="Funil inbound do mês">
+        <section className="sectionBlock funnelMetricsBlock" aria-label="Indicadores de faturamento e funil do mês">
           <div className="sectionHeader">
             <div>
-              <p className="eyebrow">Aquisição e conversão</p>
-              <h2>Funil inbound do mês</h2>
+              <p className="eyebrow">Aquisição, conversão e meta</p>
+              <h2>Indicadores do mês</h2>
+              <p className="sectionLead">
+                Valores observados no período e ritmo calculado a partir da meta mensal.
+              </p>
             </div>
-            <span className="sectionNote">Conversas únicas · coorte pela entrada</span>
+            <MonthlyRevenueTargetForm monthStart={monthStart} initialTarget={monthlyTarget} />
           </div>
 
-          <div className="funnelMetricGrid">
+          <div className="funnelMetricGrid primaryMetricGrid">
             <MetricCard label="Conversas iniciadas" value={funnelMetrics.conversationsStarted} />
-            <MetricCard label="Contatos válidos" value={funnelMetrics.validContacts} />
-            <MetricCard label="Em qualificação" value={funnelMetrics.qualifyingContacts} />
-            <MetricCard label="Qualificados" value={funnelMetrics.qualifiedContacts} />
-            <MetricCard label="Leads criados" value={funnelMetrics.leadsCreated} />
-            <MetricCard label="Negociações" value={funnelMetrics.negotiations} />
-            <MetricCard label="Fechados ganhos" value={funnelMetrics.wonDeals} />
-            <MetricCard label="Fechados perdidos" value={funnelMetrics.lostDeals} />
+            <MetricCard label="Negociações realizadas" value={funnelMetrics.negotiations} />
+            <MetricCard label="Vendas fechadas" value={funnelMetrics.salesClosed} />
+            <MetricCard label="Ticket médio" value={formatNullableCurrency(funnelMetrics.averageTicket)} />
+            <MetricCard label="Faturamento gerado no período" value={formatCurrency(funnelMetrics.revenueGenerated)} />
+            <MetricCard label="Meta de faturamento mensal" value={formatCurrency(monthlyTarget)} />
           </div>
 
-          <div className="funnelMetricDetails">
+          <div className="funnelMetricDetails rateMetricDetails">
             <div>
-              <span>Taxa de contato válido</span>
-              <strong>{formatMetricRate(funnelMetrics.rates.validContact)}</strong>
+              <span>Taxa: Conversa → Negociação</span>
+              <strong>{formatMetricRate(funnelMetrics.rates.conversationToNegotiation)}</strong>
             </div>
             <div>
-              <span>Taxa de qualificação</span>
-              <strong>{formatMetricRate(funnelMetrics.rates.qualification)}</strong>
+              <span>Taxa: Negociação → Venda</span>
+              <strong>{formatMetricRate(funnelMetrics.rates.negotiationToSale)}</strong>
             </div>
             <div>
-              <span>Avanço para negociação</span>
-              <strong>{formatMetricRate(funnelMetrics.rates.negotiation)}</strong>
+              <span>Taxa: Conversa → Venda</span>
+              <strong>{formatMetricRate(funnelMetrics.rates.conversationToSale)}</strong>
+            </div>
+          </div>
+
+          <div className="funnelMetricDetails pacingMetricDetails">
+            <div>
+              <span>Contatos necessários por venda por dia para bater a meta</span>
+              <strong>{formatNullableCount(targetPacing.conversationsPerDay)}</strong>
             </div>
             <div>
-              <span>Ganho sobre negociação</span>
-              <strong>{formatMetricRate(funnelMetrics.rates.win)}</strong>
+              <span>Negociações necessárias por venda por dia para bater a meta</span>
+              <strong>{formatNullableCount(targetPacing.negotiationsPerDay)}</strong>
+            </div>
+            <div>
+              <span>Vendas necessárias para a meta</span>
+              <strong>{formatNullableCount(targetPacing.salesNeeded)}</strong>
+            </div>
+          </div>
+
+          <div className="funnelMetricDetails operationalMetricDetails">
+            <div>
+              <span>Contatos válidos</span>
+              <strong>{funnelMetrics.validContacts}</strong>
+            </div>
+            <div>
+              <span>Em qualificação</span>
+              <strong>{funnelMetrics.qualifyingContacts}</strong>
+            </div>
+            <div>
+              <span>Qualificados</span>
+              <strong>{funnelMetrics.qualifiedContacts}</strong>
             </div>
             <div>
               <span>Aguardando primeira resposta</span>
@@ -278,7 +311,7 @@ export default async function Home() {
   );
 }
 
-function MetricCard({ label, value }: { label: string; value: number }) {
+function MetricCard({ label, value }: { label: string; value: number | string }) {
   return (
     <article className="funnelMetricCard">
       <span>{label}</span>
@@ -289,6 +322,14 @@ function MetricCard({ label, value }: { label: string; value: number }) {
 
 function formatMetricRate(value: number | null): string {
   return value === null ? "—" : `${value.toFixed(0)}%`;
+}
+
+function formatNullableCurrency(value: number | null): string {
+  return value === null ? "—" : formatCurrency(value);
+}
+
+function formatNullableCount(value: number | null): string {
+  return value === null ? "—" : String(value);
 }
 
 function formatResponseMinutes(value: number | null): string {
@@ -313,4 +354,8 @@ function currentMonthPeriod(referenceDate: Date) {
   );
 
   return { start: start.toISOString(), end: end.toISOString() };
+}
+
+function currentMonthStart(referenceDate: Date): string {
+  return `${referenceDate.getUTCFullYear()}-${String(referenceDate.getUTCMonth() + 1).padStart(2, "0")}-01`;
 }

@@ -30,8 +30,8 @@ describe("calculateFunnelMetrics", () => {
           conversation("conversation-old", "qualified", "lead-old", "2026-07-31T09:00:00.000Z")
         ],
         leads: [
-          { id: "lead-1", stage: "Fechado ganho" },
-          { id: "lead-old", stage: "Negociação" }
+          { id: "lead-1", stage: "Fechado ganho", estimatedValue: 12000 },
+          { id: "lead-old", stage: "Negociação", estimatedValue: 5000 }
         ],
         events,
         messages: []
@@ -48,6 +48,9 @@ describe("calculateFunnelMetrics", () => {
       negotiations: 1,
       wonDeals: 1,
       lostDeals: 0,
+      salesClosed: 1,
+      revenueGenerated: 12000,
+      averageTicket: 12000,
       rates: {
         validContact: 66.66666666666666,
         qualification: 50,
@@ -55,7 +58,10 @@ describe("calculateFunnelMetrics", () => {
         negotiation: 100,
         win: 100,
         loss: 0,
-        final: 33.33333333333333
+        final: 33.33333333333333,
+        conversationToNegotiation: 33.33333333333333,
+        negotiationToSale: 100,
+        conversationToSale: 33.33333333333333
       }
     });
   });
@@ -100,8 +106,36 @@ describe("calculateFunnelMetrics", () => {
       negotiation: null,
       win: null,
       loss: null,
-      final: null
+      final: null,
+      conversationToNegotiation: null,
+      negotiationToSale: null,
+      conversationToSale: null
     });
+  });
+
+  it("soma somente vendas ganhas e calcula ticket médio", () => {
+    const metrics = calculateFunnelMetrics(
+      {
+        conversations: [
+          conversation("conversation-1", "qualified", "lead-1", "2026-08-02T09:00:00.000Z"),
+          conversation("conversation-2", "qualified", "lead-2", "2026-08-03T09:00:00.000Z")
+        ],
+        leads: [
+          { id: "lead-1", stage: "Fechado ganho", estimatedValue: 12000 },
+          { id: "lead-2", stage: "Fechado perdido", estimatedValue: 9000 }
+        ],
+        events: [],
+        messages: []
+      },
+      period
+    );
+
+    expect(metrics.salesClosed).toBe(1);
+    expect(metrics.revenueGenerated).toBe(12000);
+    expect(metrics.averageTicket).toBe(12000);
+    expect(metrics.rates.conversationToNegotiation).toBe(0);
+    expect(metrics.rates.negotiationToSale).toBe(null);
+    expect(metrics.rates.conversationToSale).toBe(50);
   });
 });
 

@@ -15,6 +15,7 @@ export interface FunnelConversationSnapshot {
 export interface FunnelLeadSnapshot {
   id: string;
   stage: string;
+  estimatedValue?: number;
 }
 
 export interface FunnelMessageSnapshot {
@@ -38,6 +39,9 @@ export interface FunnelMetricRates {
   win: number | null;
   loss: number | null;
   final: number | null;
+  conversationToNegotiation: number | null;
+  negotiationToSale: number | null;
+  conversationToSale: number | null;
 }
 
 export interface FunnelMetrics {
@@ -49,6 +53,9 @@ export interface FunnelMetrics {
   negotiations: number;
   wonDeals: number;
   lostDeals: number;
+  salesClosed: number;
+  revenueGenerated: number;
+  averageTicket: number | null;
   awaitingFirstResponse: number;
   medianFirstResponseMinutes: number | null;
   rates: FunnelMetricRates;
@@ -98,6 +105,7 @@ export function calculateFunnelMetrics(
   let negotiations = 0;
   let wonDeals = 0;
   let lostDeals = 0;
+  let revenueGenerated = 0;
 
   for (const leadId of linkedLeadIds) {
     const lead = leadsById.get(leadId);
@@ -107,7 +115,10 @@ export function calculateFunnelMetrics(
     }
 
     if (stages.has("Negociação")) negotiations += 1;
-    if (stages.has("Fechado ganho")) wonDeals += 1;
+    if (stages.has("Fechado ganho")) {
+      wonDeals += 1;
+      revenueGenerated += lead?.estimatedValue ?? 0;
+    }
     if (stages.has("Fechado perdido")) lostDeals += 1;
   }
 
@@ -124,6 +135,9 @@ export function calculateFunnelMetrics(
     negotiations,
     wonDeals,
     lostDeals,
+    salesClosed: wonDeals,
+    revenueGenerated,
+    averageTicket: wonDeals === 0 ? null : revenueGenerated / wonDeals,
     awaitingFirstResponse: responseStats.awaitingFirstResponse,
     medianFirstResponseMinutes: responseStats.medianFirstResponseMinutes,
     rates: {
@@ -133,7 +147,10 @@ export function calculateFunnelMetrics(
       negotiation: percentage(negotiations, linkedLeadIds.size),
       win: percentage(wonDeals, negotiations),
       loss: percentage(lostDeals, negotiations),
-      final: percentage(wonDeals, cohortConversations.length)
+      final: percentage(wonDeals, cohortConversations.length),
+      conversationToNegotiation: percentage(negotiations, cohortConversations.length),
+      negotiationToSale: percentage(wonDeals, negotiations),
+      conversationToSale: percentage(wonDeals, cohortConversations.length)
     }
   };
 }

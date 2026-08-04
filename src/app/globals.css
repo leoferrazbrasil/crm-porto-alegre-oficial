@@ -281,10 +281,70 @@ p {
   margin-bottom: 24px;
 }
 
+.sectionLead {
+  max-width: 620px;
+  margin: 10px 0 0;
+  color: var(--pa-graphite-60);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.monthlyTargetForm {
+  display: grid;
+  gap: 8px;
+  min-width: min(100%, 390px);
+}
+
+.monthlyTargetForm label {
+  color: var(--pa-graphite-60);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.monthlyTargetFields {
+  display: grid;
+  grid-template-columns: auto minmax(120px, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.monthlyTargetFields > span {
+  color: var(--pa-graphite-60);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.monthlyTargetFields input {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 10px;
+  color: var(--pa-black);
+  background: var(--pa-surface-tint);
+  border: 1px solid var(--pa-hairline);
+  border-radius: 3px;
+  outline: none;
+}
+
+.monthlyTargetFields input:focus {
+  border-color: var(--pa-teal);
+  box-shadow: 0 0 0 3px rgba(42, 98, 131, 0.12);
+}
+
+.monthlyTargetStatus {
+  color: var(--pa-graphite-60);
+  font-size: 10px;
+}
+
 .funnelMetricGrid {
   display: grid;
   grid-template-columns: repeat(8, minmax(110px, 1fr));
   gap: 10px;
+}
+
+.primaryMetricGrid {
+  grid-template-columns: repeat(6, minmax(145px, 1fr));
 }
 
 .funnelMetricCard {
@@ -326,6 +386,18 @@ p {
 .funnelMetricDetails strong {
   color: var(--pa-teal);
   font: 700 16px/1 var(--font-display);
+}
+
+.rateMetricDetails strong {
+  color: var(--pa-black-green);
+}
+
+.pacingMetricDetails strong {
+  color: var(--pa-red);
+}
+
+.operationalMetricDetails strong {
+  color: var(--pa-teal);
 }
 
 .sectionBlock {
@@ -1539,6 +1611,10 @@ td:first-child span {
     grid-template-columns: repeat(4, minmax(110px, 1fr));
   }
 
+  .primaryMetricGrid {
+    grid-template-columns: repeat(3, minmax(145px, 1fr));
+  }
+
   .funnelMetricDetails {
     grid-template-columns: repeat(3, minmax(120px, 1fr));
   }
@@ -1604,6 +1680,14 @@ td:first-child span {
     display: grid;
   }
 
+  .sectionHeader {
+    align-items: stretch;
+  }
+
+  .monthlyTargetForm {
+    min-width: 0;
+  }
+
   .inboxIntro {
     display: grid;
   }
@@ -1653,6 +1737,10 @@ td:first-child span {
 
   .funnelMetricGrid,
   .funnelMetricDetails {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .primaryMetricGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
