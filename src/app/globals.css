@@ -1146,6 +1146,228 @@ td:first-child span {
   white-space: nowrap;
 }
 
+.inboxWorkspace {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.8fr) minmax(0, 1.6fr);
+  min-height: 560px;
+  overflow: hidden;
+  border: 1px solid var(--pa-hairline);
+  border-radius: 4px;
+  background: var(--pa-white);
+}
+
+.inboxChatList {
+  display: grid;
+  align-content: start;
+  border-right: 1px solid var(--pa-hairline);
+  background: var(--pa-surface-tint);
+}
+
+.inboxChatItem {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 15px 14px;
+  text-align: left;
+  color: var(--pa-black);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--pa-hairline);
+  cursor: pointer;
+}
+
+.inboxChatItem:hover,
+.inboxChatItem:focus-visible,
+.inboxChatItemActive {
+  background: var(--pa-white);
+  outline: none;
+  box-shadow: inset 3px 0 0 var(--pa-teal);
+}
+
+.inboxChatItem:disabled {
+  color: var(--pa-graphite-60);
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.inboxChatIdentity,
+.inboxChatMeta {
+  display: grid;
+  gap: 5px;
+}
+
+.inboxChatIdentity {
+  min-width: 0;
+}
+
+.inboxChatIdentity strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inboxChatIdentity small,
+.inboxChatMeta small {
+  color: var(--pa-graphite-60);
+  font-size: 10px;
+}
+
+.inboxChatMeta {
+  flex: 0 0 auto;
+  justify-items: end;
+}
+
+.inboxConversation {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  min-width: 0;
+}
+
+.inboxConversationHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px;
+  border-bottom: 1px solid var(--pa-hairline);
+}
+
+.inboxConversationHeader h3 {
+  margin: 4px 0 5px;
+  font: 700 21px/1.15 var(--font-display);
+}
+
+.inboxConversationHeader > div:first-child > span {
+  color: var(--pa-graphite-60);
+  font-size: 12px;
+}
+
+.inboxConversationContext {
+  display: grid;
+  justify-items: end;
+  gap: 6px;
+  color: var(--pa-graphite-60);
+  font-size: 11px;
+  text-align: right;
+}
+
+.inboxPolicyNotice {
+  padding: 9px 20px;
+  color: var(--pa-teal);
+  background: rgba(42, 98, 131, 0.07);
+  border-bottom: 1px solid var(--pa-hairline);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.inboxTimeline {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 260px;
+  max-height: 420px;
+  overflow-y: auto;
+  padding: 20px;
+  background: #fbfaf7;
+}
+
+.inboxMessage {
+  max-width: min(78%, 520px);
+  padding: 11px 13px;
+  border: 1px solid var(--pa-hairline);
+  border-radius: 4px;
+}
+
+.inboxMessage p {
+  margin: 0;
+  color: var(--pa-black);
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.inboxMessage span {
+  display: block;
+  margin-top: 7px;
+  color: var(--pa-graphite-60);
+  font-size: 10px;
+}
+
+.inboxMessageInbound {
+  align-self: flex-start;
+  background: var(--pa-white);
+}
+
+.inboxMessageOutbound {
+  align-self: flex-end;
+  background: rgba(145, 163, 63, 0.13);
+  border-color: rgba(145, 163, 63, 0.32);
+}
+
+.inboxConversationEmpty {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 8px;
+  min-height: 260px;
+  padding: 28px;
+  color: var(--pa-graphite-60);
+  text-align: center;
+  font-size: 13px;
+}
+
+.inboxConversationEmpty strong {
+  color: var(--pa-black);
+}
+
+.inboxComposer {
+  display: grid;
+  gap: 8px;
+  padding: 16px 20px 20px;
+  border-top: 1px solid var(--pa-hairline);
+  background: var(--pa-white);
+}
+
+.inboxComposer label {
+  color: var(--pa-graphite-60);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.inboxComposer textarea {
+  width: 100%;
+  min-height: 82px;
+  padding: 11px 12px;
+  color: var(--pa-black);
+  background: var(--pa-white);
+  border: 1px solid var(--pa-hairline);
+  border-radius: 3px;
+  resize: vertical;
+}
+
+.inboxComposer textarea:focus {
+  border-color: var(--pa-teal);
+  outline: 2px solid rgba(42, 98, 131, 0.16);
+  outline-offset: 1px;
+}
+
+.inboxComposerFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--pa-graphite-60);
+  font-size: 11px;
+}
+
+.inboxComposerFooter .primaryLinkButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 @media (max-width: 1180px) {
   .kpiGrid {
     grid-template-columns: repeat(3, 1fr);
@@ -1214,6 +1436,26 @@ td:first-child span {
 
   .inboxIntro {
     display: grid;
+  }
+
+  .inboxWorkspace {
+    grid-template-columns: 1fr;
+  }
+
+  .inboxChatList {
+    max-height: 260px;
+    overflow-y: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--pa-hairline);
+  }
+
+  .inboxConversationHeader {
+    display: grid;
+  }
+
+  .inboxConversationContext {
+    justify-items: start;
+    text-align: left;
   }
 
   .headerMeta {

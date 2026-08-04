@@ -57,10 +57,22 @@ export type ZapiChatsResult =
       message: string;
     };
 
+export type ZapiSendTextResult =
+  | {
+      ok: true;
+      zaapId: string | null;
+      messageId: string;
+    }
+  | {
+      ok: false;
+      message: string;
+    };
+
 export interface ZapiClient {
   getStatus(): Promise<ZapiStatusResult>;
   getQrCodeImage(): Promise<ZapiQrCodeResult>;
   getChats(page?: number, pageSize?: number): Promise<ZapiChatsResult>;
+  sendText(phone: string, message: string): Promise<ZapiSendTextResult>;
 }
 
 type ZapiFetcher = typeof fetch;
@@ -74,7 +86,7 @@ export function createZapiClient(
       const response = await callZapi(config, fetcher, "status");
 
       if (!response.ok) {
-        return safeError();
+        return safeError<ZapiStatusResult>();
       }
 
       const data = (await response.json()) as Partial<{
@@ -95,7 +107,7 @@ export function createZapiClient(
       const response = await callZapi(config, fetcher, "qr-code/image");
 
       if (!response.ok) {
-        return safeError();
+        return safeError<ZapiQrCodeResult>();
       }
 
       const data = (await response.json()) as Partial<{
@@ -143,7 +155,7 @@ export function createZapiClient(
       );
 
       if (!response.ok) {
-        return safeError();
+        return safeError<ZapiChatsResult>();
       }
 
       const data = (await response.json()) as unknown;
@@ -161,6 +173,38 @@ export function createZapiClient(
         page,
         pageSize
       };
+    },
+
+    async sendText(phone, message) {
+      const response = await callZapi(config, fetcher, "send-text", {
+        method: "POST",
+        headers: {
+          "Client-Token": config.clientToken,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ phone, message })
+      });
+
+      if (!response.ok) {
+        return safeError<ZapiSendTextResult>();
+      }
+
+      const data = (await response.json()) as Partial<{
+        zaapId: string;
+        messageId: string;
+        id: string;
+      }>;
+      const messageId = stringFromZapi(data.messageId) || stringFromZapi(data.id);
+
+      if (!messageId) {
+        return safeError<ZapiSendTextResult>();
+      }
+
+      return {
+        ok: true,
+        zaapId: stringFromZapi(data.zaapId) || null,
+        messageId
+      };
     }
   };
 }
@@ -168,11 +212,12 @@ export function createZapiClient(
 function callZapi(
   config: ZapiConfig,
   fetcher: ZapiFetcher,
-  path: string
+  path: string,
+  init?: RequestInit
 ) {
   return fetcher(
     `${ZAPI_BASE_URL}/instances/${config.instanceId}/token/${config.instanceToken}/${path}`,
-    {
+    init ?? {
       headers: {
         "Client-Token": config.clientToken
       }
@@ -226,9 +271,9 @@ function timestampSecondsToIso(value: unknown): string | null {
   return seconds > 0 ? new Date(seconds * 1000).toISOString() : null;
 }
 
-function safeError(): ZapiStatusResult & ZapiQrCodeResult & ZapiChatsResult {
+function safeError<T>(): T {
   return {
     ok: false,
     message: ZAPI_SAFE_ERROR
-  };
+  } as T;
 }

@@ -68,13 +68,13 @@ export default async function ConversationsPage() {
             <p className="eyebrow accentText">Atendimento comercial</p>
             <h1>Conversas iniciadas pelos leads</h1>
             <p className="headerDescription">
-              Acompanhe os chats do WhatsApp conectado ao tráfego pago em uma
-              visão operacional somente leitura.
+              Receba os contatos originados pela landing page e conduza o
+              primeiro atendimento manual pelo WhatsApp conectado.
             </p>
           </div>
           <div className="headerMeta">
             <span>WhatsApp via Z-API</span>
-            <strong>V1 · somente leitura</strong>
+            <strong>Inbound · texto manual</strong>
           </div>
         </header>
 
