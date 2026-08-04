@@ -40,4 +40,13 @@ describe("filterAndSortChats", () => {
       ).map((item) => item.phone)
     ).toEqual(["unread"]);
   });
+
+  it("excludes chats without a phone identifier", () => {
+    expect(
+      filterAndSortChats(
+        [chat(""), chat("5511999999999")],
+        "individual"
+      ).map((item) => item.phone)
+    ).toEqual(["5511999999999"]);
+  });
 });

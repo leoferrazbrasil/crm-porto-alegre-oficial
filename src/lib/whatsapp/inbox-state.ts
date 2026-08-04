@@ -7,6 +7,7 @@ export function filterAndSortChats(
   filter: InboxFilter
 ): ZapiChat[] {
   return chats
+    .filter((chat) => chat.phone.trim().length > 0)
     .filter((chat) => {
       if (filter === "unread") return chat.unread > 0 || chat.messagesUnread > 0;
       if (filter === "individual") return !chat.isGroup;
