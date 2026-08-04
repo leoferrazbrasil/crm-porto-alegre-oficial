@@ -1,7 +1,6 @@
-import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { CrmSidebar } from "@/components/crm/CrmSidebar";
 import { getProfileDisplayName } from "@/lib/auth/access";
 import { requireCurrentAdmin } from "@/lib/auth/session";
 import { getLeadById } from "@/lib/crm/leads-repository";
@@ -30,53 +29,7 @@ export default async function EditLeadPage({ params }: EditLeadPageProps) {
 
   return (
     <div className="appShell">
-      <aside className="sidebar">
-        <div className="logoChip">
-          <Image
-            src="/logo-porto-alegre-oficial.png"
-            alt="Porto Alegre Oficial"
-            width={140}
-            height={132}
-            priority
-          />
-        </div>
-
-        <nav aria-label="Navegação principal">
-          <Link className="navItem" href="/">
-            <span className="navDot" />
-            Visão geral
-          </Link>
-          <Link className="navItem navItemActive" href="/leads">
-            <span className="navDot" />
-            Leads
-          </Link>
-          <Link className="navItem" href="/conversas">
-            <span className="navDot" />
-            Conversas
-          </Link>
-          <Link className="navItem" href="/integracoes/whatsapp">
-            <span className="navDot" />
-            WhatsApp
-          </Link>
-          <Link className="navItem" href="/perfil">
-            <span className="navDot" />
-            Perfil
-          </Link>
-        </nav>
-
-        <div className="sidebarFooter">
-          <span className="eyebrow">Acesso atual</span>
-          <Link className="profileUserLink" href="/perfil">
-            {adminName}
-          </Link>
-          <span>Administrador do CRM</span>
-          <form action="/auth/sign-out" method="post">
-            <button className="signOutButton" type="submit">
-              Sair
-            </button>
-          </form>
-        </div>
-      </aside>
+      <CrmSidebar adminName={adminName} activeItem="leads" />
 
       <main className="mainContent">
         <header className="pageHeader">

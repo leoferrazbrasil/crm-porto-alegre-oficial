@@ -1,6 +1,3 @@
-import Image from "next/image";
-import Link from "next/link";
-
 import {
   buildDashboardViewModel,
   formatCurrency,
@@ -11,6 +8,7 @@ import { mockLeads, mockTasks } from "@/lib/crm/mock-data";
 import { getProfileDisplayName } from "@/lib/auth/access";
 import { requireCurrentAdmin } from "@/lib/auth/session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { CrmSidebar } from "@/components/crm/CrmSidebar";
 
 const referenceDate = new Date("2026-07-30T15:00:00.000Z");
 
@@ -35,69 +33,7 @@ export default async function Home() {
 
   return (
     <div className="appShell">
-      <aside className="sidebar">
-        <div className="logoChip">
-          <Image
-            src="/logo-porto-alegre-oficial.png"
-            alt="Porto Alegre Oficial"
-            width={140}
-            height={132}
-            priority
-          />
-        </div>
-
-        <nav aria-label="Navegação principal">
-          <a className="navItem navItemActive" href="#visao-geral">
-            <span className="navDot" />
-            Visão geral
-          </a>
-          <a className="navItem" href="#pipeline">
-            <span className="navDot" />
-            Pipeline
-          </a>
-          <a className="navItem" href="#oportunidades">
-            <span className="navDot" />
-            Oportunidades
-          </a>
-          <a className="navItem" href="#rotina">
-            <span className="navDot" />
-            Rotina comercial
-          </a>
-          <a className="navItem" href="#metas">
-            <span className="navDot" />
-            Metas
-          </a>
-          <Link className="navItem" href="/perfil">
-            <span className="navDot" />
-            Perfil
-          </Link>
-          <Link className="navItem" href="/leads">
-            <span className="navDot" />
-            Leads
-          </Link>
-          <Link className="navItem" href="/conversas">
-            <span className="navDot" />
-            Conversas
-          </Link>
-          <Link className="navItem" href="/integracoes/whatsapp">
-            <span className="navDot" />
-            WhatsApp
-          </Link>
-        </nav>
-
-        <div className="sidebarFooter">
-          <span className="eyebrow">Acesso atual</span>
-          <Link className="profileUserLink" href="/perfil">
-            {adminName}
-          </Link>
-          <span>Administrador do CRM</span>
-          <form action="/auth/sign-out" method="post">
-            <button className="signOutButton" type="submit">
-              Sair
-            </button>
-          </form>
-        </div>
-      </aside>
+      <CrmSidebar adminName={adminName} activeItem="overview" />
 
       <main className="mainContent" id="visao-geral">
         <header className="pageHeader">
