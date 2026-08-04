@@ -1,4 +1,5 @@
 import { calculateCrmSummary, groupLeadsByStage } from "./metrics";
+import type { FunnelMetrics } from "./funnel-metrics";
 import type { CommercialTask, Lead } from "./types";
 
 export function formatCurrency(value: number) {
@@ -19,10 +20,12 @@ export function formatShortDate(value: string) {
 export function buildDashboardViewModel(
   leads: Lead[],
   tasks: CommercialTask[],
-  referenceDate = new Date()
+  referenceDate = new Date(),
+  funnelMetrics?: FunnelMetrics
 ) {
   return {
     summary: calculateCrmSummary(leads, referenceDate),
+    funnelMetrics,
     pipeline: groupLeadsByStage(leads),
     activeLeads: leads
       .filter(

@@ -277,6 +277,57 @@ p {
   border-top: 3px solid var(--pa-red);
 }
 
+.funnelMetricsBlock {
+  margin-bottom: 24px;
+}
+
+.funnelMetricGrid {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(110px, 1fr));
+  gap: 10px;
+}
+
+.funnelMetricCard {
+  display: grid;
+  gap: 10px;
+  min-height: 92px;
+  padding: 14px;
+  background: var(--pa-surface-tint);
+  border: 1px solid var(--pa-hairline);
+  border-radius: 3px;
+}
+
+.funnelMetricCard span,
+.funnelMetricDetails span {
+  color: var(--pa-graphite-60);
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.funnelMetricCard strong {
+  color: var(--pa-black);
+  font: 700 24px/1 var(--font-display);
+}
+
+.funnelMetricDetails {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(120px, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--pa-hairline);
+}
+
+.funnelMetricDetails div {
+  display: grid;
+  gap: 6px;
+}
+
+.funnelMetricDetails strong {
+  color: var(--pa-teal);
+  font: 700 16px/1 var(--font-display);
+}
+
 .sectionBlock {
   max-width: 1500px;
   margin: 0 auto 24px;
@@ -1484,6 +1535,14 @@ td:first-child span {
     grid-template-columns: repeat(3, 1fr);
   }
 
+  .funnelMetricGrid {
+    grid-template-columns: repeat(4, minmax(110px, 1fr));
+  }
+
+  .funnelMetricDetails {
+    grid-template-columns: repeat(3, minmax(120px, 1fr));
+  }
+
   .pipelineGrid {
     grid-template-columns: repeat(2, minmax(170px, 1fr));
   }
@@ -1590,6 +1649,11 @@ td:first-child span {
   .kpiGrid,
   .goalGrid {
     grid-template-columns: 1fr;
+  }
+
+  .funnelMetricGrid,
+  .funnelMetricDetails {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .pipelineGrid {

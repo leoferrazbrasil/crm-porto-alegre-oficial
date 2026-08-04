@@ -4,13 +4,12 @@ import {
   formatShortDate
 } from "@/lib/crm/dashboard";
 import { listLeads } from "@/lib/crm/leads-repository";
+import { getFunnelMetrics } from "@/lib/crm/funnel-metrics-repository";
 import { mockLeads, mockTasks } from "@/lib/crm/mock-data";
 import { getProfileDisplayName } from "@/lib/auth/access";
 import { requireCurrentAdmin } from "@/lib/auth/session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { CrmSidebar } from "@/components/crm/CrmSidebar";
-
-const referenceDate = new Date("2026-07-30T15:00:00.000Z");
 
 export default async function Home() {
   const { profile, user } = await requireCurrentAdmin();
@@ -20,6 +19,9 @@ export default async function Home() {
   );
   const supabase = await createSupabaseServerClient();
   const persistedLeads = await listLeads(supabase);
+  const referenceDate = new Date();
+  const period = currentMonthPeriod(referenceDate);
+  const funnelMetrics = await getFunnelMetrics(supabase, period);
   const leads = persistedLeads.length ? persistedLeads : mockLeads;
   const dataLabel = persistedLeads.length
     ? "Dados reais · sessão protegida"
@@ -27,7 +29,8 @@ export default async function Home() {
   const dashboard = buildDashboardViewModel(
     leads,
     mockTasks,
-    referenceDate
+    referenceDate,
+    funnelMetrics
   );
   const { summary } = dashboard;
 
@@ -47,7 +50,7 @@ export default async function Home() {
           </div>
           <div className="headerMeta">
             <span>{dataLabel}</span>
-            <strong>30 de julho de 2026</strong>
+            <strong>{formatMonthLabel(referenceDate)}</strong>
           </div>
         </header>
 
@@ -84,6 +87,54 @@ export default async function Home() {
             <strong>{summary.overdueNextActions}</strong>
             <small>Exigem atualização imediata</small>
           </article>
+        </section>
+
+        <section className="sectionBlock funnelMetricsBlock" aria-label="Funil inbound do mês">
+          <div className="sectionHeader">
+            <div>
+              <p className="eyebrow">Aquisição e conversão</p>
+              <h2>Funil inbound do mês</h2>
+            </div>
+            <span className="sectionNote">Conversas únicas · coorte pela entrada</span>
+          </div>
+
+          <div className="funnelMetricGrid">
+            <MetricCard label="Conversas iniciadas" value={funnelMetrics.conversationsStarted} />
+            <MetricCard label="Contatos válidos" value={funnelMetrics.validContacts} />
+            <MetricCard label="Em qualificação" value={funnelMetrics.qualifyingContacts} />
+            <MetricCard label="Qualificados" value={funnelMetrics.qualifiedContacts} />
+            <MetricCard label="Leads criados" value={funnelMetrics.leadsCreated} />
+            <MetricCard label="Negociações" value={funnelMetrics.negotiations} />
+            <MetricCard label="Fechados ganhos" value={funnelMetrics.wonDeals} />
+            <MetricCard label="Fechados perdidos" value={funnelMetrics.lostDeals} />
+          </div>
+
+          <div className="funnelMetricDetails">
+            <div>
+              <span>Taxa de contato válido</span>
+              <strong>{formatMetricRate(funnelMetrics.rates.validContact)}</strong>
+            </div>
+            <div>
+              <span>Taxa de qualificação</span>
+              <strong>{formatMetricRate(funnelMetrics.rates.qualification)}</strong>
+            </div>
+            <div>
+              <span>Avanço para negociação</span>
+              <strong>{formatMetricRate(funnelMetrics.rates.negotiation)}</strong>
+            </div>
+            <div>
+              <span>Ganho sobre negociação</span>
+              <strong>{formatMetricRate(funnelMetrics.rates.win)}</strong>
+            </div>
+            <div>
+              <span>Aguardando primeira resposta</span>
+              <strong>{funnelMetrics.awaitingFirstResponse}</strong>
+            </div>
+            <div>
+              <span>Mediana até primeira resposta</span>
+              <strong>{formatResponseMinutes(funnelMetrics.medianFirstResponseMinutes)}</strong>
+            </div>
+          </div>
         </section>
 
         <section className="sectionBlock" id="pipeline">
@@ -225,4 +276,41 @@ export default async function Home() {
       <div className="brandRuler" aria-hidden="true" />
     </div>
   );
+}
+
+function MetricCard({ label, value }: { label: string; value: number }) {
+  return (
+    <article className="funnelMetricCard">
+      <span>{label}</span>
+      <strong>{value}</strong>
+    </article>
+  );
+}
+
+function formatMetricRate(value: number | null): string {
+  return value === null ? "—" : `${value.toFixed(0)}%`;
+}
+
+function formatResponseMinutes(value: number | null): string {
+  if (value === null) return "—";
+  if (value < 60) return `${Math.round(value)} min`;
+  return `${(value / 60).toFixed(1)} h`;
+}
+
+function formatMonthLabel(value: Date): string {
+  return new Intl.DateTimeFormat("pt-BR", {
+    month: "long",
+    year: "numeric"
+  }).format(value);
+}
+
+function currentMonthPeriod(referenceDate: Date) {
+  const start = new Date(
+    Date.UTC(referenceDate.getUTCFullYear(), referenceDate.getUTCMonth(), 1)
+  );
+  const end = new Date(
+    Date.UTC(referenceDate.getUTCFullYear(), referenceDate.getUTCMonth() + 1, 1)
+  );
+
+  return { start: start.toISOString(), end: end.toISOString() };
 }
