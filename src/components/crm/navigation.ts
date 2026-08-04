@@ -7,3 +7,10 @@ export const CRM_NAV_ITEMS = [
 ] as const;
 
 export type CrmNavItemId = (typeof CRM_NAV_ITEMS)[number]["id"];
+
+export function getCrmNavItemClassName(
+  itemId: CrmNavItemId,
+  activeItem: CrmNavItemId
+): string {
+  return itemId === activeItem ? "navItem navItemActive" : "navItem";
+}

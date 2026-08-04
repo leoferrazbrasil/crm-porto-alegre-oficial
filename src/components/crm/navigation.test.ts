@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { CRM_NAV_ITEMS } from "./navigation";
+import { CRM_NAV_ITEMS, getCrmNavItemClassName } from "./navigation";
 
 describe("CRM sidebar navigation", () => {
   it("exposes only the five primary modules", () => {
@@ -24,5 +24,12 @@ describe("CRM sidebar navigation", () => {
         "Metas"
       ])
     );
+  });
+
+  it("marks only the current primary module as active", () => {
+    expect(getCrmNavItemClassName("overview", "overview")).toBe(
+      "navItem navItemActive"
+    );
+    expect(getCrmNavItemClassName("leads", "overview")).toBe("navItem");
   });
 });
