@@ -35,6 +35,18 @@ export interface WhatsappMessage {
   createdAt: string;
 }
 
+export const WHATSAPP_QUALIFICATION_STATUSES = [
+  "new",
+  "qualifying",
+  "qualified",
+  "not_interested",
+  "mistake",
+  "spam"
+] as const;
+
+export type WhatsappQualificationStatus =
+  (typeof WHATSAPP_QUALIFICATION_STATUSES)[number];
+
 export interface WhatsappConversation {
   id: string;
   instanceId: string;
@@ -46,8 +58,13 @@ export interface WhatsappConversation {
   sourceDetail: string | null;
   campaign: string | null;
   clickId: string | null;
+  qualificationStatus: WhatsappQualificationStatus;
   lastMessageAt: string | null;
 }
+
+export type WhatsappConversationMutationResult =
+  | { ok: true; qualificationStatus: WhatsappQualificationStatus }
+  | { ok: false; message: string };
 
 export async function upsertConversationAndMessage(
   client: WhatsappRepositoryClient,
@@ -131,6 +148,33 @@ export async function updateMessageDelivery(
   };
 }
 
+export async function updateConversationQualificationStatus(
+  client: WhatsappRepositoryClient,
+  instanceId: string,
+  phone: string,
+  status: WhatsappQualificationStatus
+): Promise<WhatsappConversationMutationResult> {
+  const { data, error } = await client
+    .from("whatsapp_conversations")
+    .update({ qualification_status: status })
+    .eq("instance_id", instanceId)
+    .eq("phone", phone)
+    .select("id, qualification_status")
+    .maybeSingle();
+
+  if (error || !data?.id || !isWhatsappQualificationStatus(data.qualification_status)) {
+    return {
+      ok: false,
+      message: "Não foi possível atualizar o estado da conversa."
+    };
+  }
+
+  return {
+    ok: true,
+    qualificationStatus: data.qualification_status
+  };
+}
+
 export async function listConversationMessages(
   client: WhatsappRepositoryClient,
   instanceId: string,
@@ -168,7 +212,7 @@ export async function getConversation(
   const { data, error } = await client
     .from("whatsapp_conversations")
     .select(
-      "id, instance_id, phone, name, is_group, lead_id, source_channel, source_detail, campaign, click_id, last_message_at"
+      "id, instance_id, phone, name, is_group, lead_id, source_channel, source_detail, campaign, click_id, qualification_status, last_message_at"
     )
     .eq("instance_id", instanceId)
     .eq("phone", phone)
@@ -188,6 +232,9 @@ export async function getConversation(
     sourceDetail: stringValue(row.source_detail) || null,
     campaign: stringValue(row.campaign) || null,
     clickId: stringValue(row.click_id) || null,
+    qualificationStatus: isWhatsappQualificationStatus(row.qualification_status)
+      ? row.qualification_status
+      : "new",
     lastMessageAt: stringValue(row.last_message_at) || null
   };
 }
@@ -213,4 +260,12 @@ function mapMessageRow(row: Record<string, unknown>): WhatsappMessage {
 
 function stringValue(value: unknown): string {
   return typeof value === "string" ? value : "";
+}
+
+function isWhatsappQualificationStatus(
+  value: unknown
+): value is WhatsappQualificationStatus {
+  return WHATSAPP_QUALIFICATION_STATUSES.includes(
+    value as WhatsappQualificationStatus
+  );
 }

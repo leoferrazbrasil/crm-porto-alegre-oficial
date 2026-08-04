@@ -6,9 +6,11 @@ import {
   isSelectedChatPhone,
   getConversation,
   listConversationMessages,
+  updateConversationQualificationStatus,
   updateMessageDelivery,
   upsertConversationAndMessage,
-  type PersistedWhatsappMessage
+  type PersistedWhatsappMessage,
+  type WhatsappQualificationStatus
 } from "./repository";
 
 const message: PersistedWhatsappMessage = {
@@ -44,6 +46,7 @@ describe("whatsapp repository", () => {
         source_detail: "facebook",
         campaign: "poa-inbound-01",
         click_id: "gclid-123",
+        qualification_status: "qualifying",
         last_message_at: "2024-03-09T16:00:00.000Z"
       }
     }) as unknown as SupabaseClient;
@@ -55,8 +58,37 @@ describe("whatsapp repository", () => {
       sourceChannel: "WhatsApp inbound",
       sourceDetail: "facebook",
       campaign: "poa-inbound-01",
-      clickId: "gclid-123"
+      clickId: "gclid-123",
+      qualificationStatus: "qualifying"
     });
+  });
+
+  it("updates only the selected conversation qualification status", async () => {
+    const calls: Array<{ table: string; method: string; payload?: unknown }> = [];
+    const client = fakeClient(
+      { conversationStatus: { id: "conversation-1", qualification_status: "qualified" } },
+      calls
+    ) as unknown as SupabaseClient;
+
+    await expect(
+      updateConversationQualificationStatus(
+        client,
+        "instance-1",
+        "5511999999999",
+        "qualified" as WhatsappQualificationStatus
+      )
+    ).resolves.toEqual({
+      ok: true,
+      qualificationStatus: "qualified"
+    });
+
+    expect(calls).toEqual([
+      {
+        table: "whatsapp_conversations",
+        method: "update",
+        payload: { qualification_status: "qualified" }
+      }
+    ]);
   });
 
   it("upserts a conversation and ignores a repeated provider message", async () => {
@@ -179,6 +211,7 @@ describe("whatsapp repository", () => {
 function fakeClient(
   result: {
     conversations?: { id: string } | null;
+    conversationStatus?: { id: string; qualification_status: string } | null;
     messageUpsert?: unknown;
     delivery?: { id: string } | null;
     messages?: unknown[];
@@ -201,6 +234,26 @@ function fakeClient(
         },
         update(payload: unknown) {
           calls.push({ table, method: "update", payload });
+          if (table === "whatsapp_conversations") {
+            return {
+              eq() {
+                return {
+                  eq() {
+                    return {
+                      select() {
+                        return {
+                          maybeSingle: async () => ({
+                            data: result.conversationStatus ?? null,
+                            error: null
+                          })
+                        };
+                      }
+                    };
+                  }
+                };
+              }
+            };
+          }
           return {
             eq() {
               return {
