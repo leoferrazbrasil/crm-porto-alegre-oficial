@@ -21,7 +21,7 @@ export async function POST(
     payload = await request.json();
   } catch {
     return NextResponse.json(
-      { ok: false, message: "Informe empresa e segmento." },
+      { ok: false, message: "Informe empresa, segmento, próxima ação e data." },
       { status: 400 }
     );
   }
@@ -32,9 +32,11 @@ export async function POST(
           companyName: String(
             (payload as { companyName?: unknown }).companyName ?? ""
           ),
-          segment: String((payload as { segment?: unknown }).segment ?? "")
+          segment: String((payload as { segment?: unknown }).segment ?? ""),
+          nextAction: String((payload as { nextAction?: unknown }).nextAction ?? ""),
+          nextActionAt: String((payload as { nextActionAt?: unknown }).nextActionAt ?? "")
         }
-      : { companyName: "", segment: "" };
+      : { companyName: "", segment: "", nextAction: "", nextActionAt: "" };
 
   const { phone } = await context.params;
   const supabase = await createSupabaseServerClient();

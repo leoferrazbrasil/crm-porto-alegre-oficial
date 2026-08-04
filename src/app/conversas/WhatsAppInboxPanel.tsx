@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 
 import type { ZapiChat } from "@/lib/zapi/client";
@@ -12,13 +13,13 @@ import {
   type InboxFilter
 } from "@/lib/whatsapp/inbox-state";
 import {
-  canConvertConversation,
   qualificationStatusLabel
 } from "@/lib/whatsapp/qualification";
 import {
   WHATSAPP_QUALIFICATION_STATUSES,
   type WhatsappQualificationStatus
 } from "@/lib/whatsapp/repository";
+import { getConversionAction } from "./conversation-conversion";
 
 interface ChatsResponse {
   ok: boolean;
@@ -64,8 +65,11 @@ export function WhatsAppInboxPanel() {
   const [sendState, setSendState] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [statusState, setStatusState] = useState<"idle" | "updating">("idle");
   const [conversionState, setConversionState] = useState<"idle" | "converting" | "converted">("idle");
+  const [conversionOpen, setConversionOpen] = useState(false);
   const [companyName, setCompanyName] = useState("");
   const [segment, setSegment] = useState("");
+  const [nextAction, setNextAction] = useState("");
+  const [nextActionAt, setNextActionAt] = useState("");
   const [draft, setDraft] = useState("");
   const [error, setError] = useState<string | null>(null);
 
@@ -150,8 +154,11 @@ export function WhatsAppInboxPanel() {
     setSendState("idle");
     setStatusState("idle");
     setConversionState("idle");
+    setConversionOpen(false);
     setCompanyName(chat.name || "");
     setSegment("");
+    setNextAction("");
+    setNextActionAt("");
     setDraft("");
     void requestTimeline(chat.phone);
   }
@@ -195,7 +202,14 @@ export function WhatsAppInboxPanel() {
 
   async function submitLeadConversion(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!selectedPhone || !companyName.trim() || !segment.trim() || conversionState === "converting") {
+    if (
+      !selectedPhone ||
+      !companyName.trim() ||
+      !segment.trim() ||
+      !nextAction.trim() ||
+      !nextActionAt.trim() ||
+      conversionState === "converting"
+    ) {
       return;
     }
 
@@ -208,7 +222,7 @@ export function WhatsAppInboxPanel() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ companyName, segment })
+          body: JSON.stringify({ companyName, segment, nextAction, nextActionAt })
         }
       );
       const data = (await response.json()) as LeadConversionResponse;
@@ -218,6 +232,7 @@ export function WhatsAppInboxPanel() {
       }
 
       setConversionState("converted");
+      setConversionOpen(false);
       await requestTimeline(selectedPhone, false);
     } catch (conversionError) {
       setError(
@@ -228,6 +243,19 @@ export function WhatsAppInboxPanel() {
       setConversionState("idle");
     }
   }
+
+  useEffect(() => {
+    if (!conversionOpen) return;
+
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === "Escape" && conversionState !== "converting") {
+        setConversionOpen(false);
+      }
+    }
+
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [conversionOpen, conversionState]);
 
   async function submitMessage(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -367,6 +395,15 @@ export function WhatsAppInboxPanel() {
                     <span>{conversation?.sourceChannel ?? "WhatsApp inbound"}</span>
                     {conversation?.sourceDetail ? <span>Origem: {conversation.sourceDetail}</span> : null}
                     {conversation?.campaign ? <span>Campanha: {conversation.campaign}</span> : null}
+                    {conversation ? (
+                      <ConversationAction
+                        conversation={conversation}
+                        onConvert={() => {
+                          setConversionState("idle");
+                          setConversionOpen(true);
+                        }}
+                      />
+                    ) : null}
                   </div>
                 </header>
 
@@ -395,39 +432,111 @@ export function WhatsAppInboxPanel() {
                   </div>
                 </div>
 
-                {conversation && canConvertConversation(conversation) ? (
-                  <form className="inboxLeadConversion" onSubmit={submitLeadConversion}>
-                    <div>
-                      <p className="eyebrow">Conversão explícita</p>
-                      <strong>Transformar contato em lead</strong>
-                      <span>
-                        Informe os dados mínimos para criar a oportunidade e vinculá-la a esta conversa.
-                      </span>
-                    </div>
-                    <div className="inboxLeadConversionFields">
-                      <label>
-                        Empresa
-                        <input
-                          onChange={(event) => setCompanyName(event.target.value)}
-                          placeholder="Nome da empresa"
-                          required
-                          value={companyName}
-                        />
-                      </label>
-                      <label>
-                        Segmento
-                        <input
-                          onChange={(event) => setSegment(event.target.value)}
-                          placeholder="Ex.: serviços, turismo, gastronomia"
-                          required
-                          value={segment}
-                        />
-                      </label>
-                      <button className="primaryLinkButton" disabled={conversionState === "converting"} type="submit">
-                        {conversionState === "converting" ? "Convertendo…" : "Converter em lead"}
-                      </button>
-                    </div>
-                  </form>
+                {conversionOpen && conversation ? (
+                  <div
+                    className="inboxConversionOverlay"
+                    onMouseDown={(event) => {
+                      if (event.target === event.currentTarget && conversionState !== "converting") {
+                        setConversionOpen(false);
+                      }
+                    }}
+                  >
+                    <section
+                      aria-labelledby="conversion-dialog-title"
+                      aria-modal="true"
+                      className="inboxConversionDialog"
+                      role="dialog"
+                    >
+                      <header className="inboxConversionDialogHeader">
+                        <div>
+                          <p className="eyebrow">Conversão explícita</p>
+                          <h3 id="conversion-dialog-title">Transformar contato em lead</h3>
+                          <p>Complete os dados mínimos sem sair desta conversa.</p>
+                        </div>
+                        <button
+                          aria-label="Fechar conversão"
+                          className="inboxDialogClose"
+                          disabled={conversionState === "converting"}
+                          onClick={() => setConversionOpen(false)}
+                          type="button"
+                        >
+                          ×
+                        </button>
+                      </header>
+
+                      <div className="inboxConversionReadonly">
+                        <div>
+                          <span>Contato</span>
+                          <strong>{selectedChat?.name || "Sem nome"}</strong>
+                        </div>
+                        <div>
+                          <span>Telefone</span>
+                          <strong>{selectedChat?.phone}</strong>
+                        </div>
+                        <div>
+                          <span>Etapa</span>
+                          <strong>Negociação</strong>
+                        </div>
+                      </div>
+
+                      <form className="inboxConversionForm" onSubmit={submitLeadConversion}>
+                        <label>
+                          Empresa
+                          <input
+                            autoFocus
+                            onChange={(event) => setCompanyName(event.target.value)}
+                            placeholder="Nome da empresa"
+                            required
+                            value={companyName}
+                          />
+                        </label>
+                        <label>
+                          Segmento
+                          <input
+                            onChange={(event) => setSegment(event.target.value)}
+                            placeholder="Ex.: serviços, turismo, gastronomia"
+                            required
+                            value={segment}
+                          />
+                        </label>
+                        <label>
+                          Próxima ação
+                          <textarea
+                            onChange={(event) => setNextAction(event.target.value)}
+                            placeholder="Ex.: agendar diagnóstico comercial"
+                            required
+                            rows={2}
+                            value={nextAction}
+                          />
+                        </label>
+                        <label>
+                          Data da próxima ação
+                          <input
+                            onChange={(event) => setNextActionAt(event.target.value)}
+                            required
+                            type="datetime-local"
+                            value={nextActionAt}
+                          />
+                        </label>
+
+                        {error ? <p className="inboxConversionError" role="alert">{error}</p> : null}
+
+                        <div className="inboxConversionActions">
+                          <button
+                            className="secondaryButton"
+                            disabled={conversionState === "converting"}
+                            onClick={() => setConversionOpen(false)}
+                            type="button"
+                          >
+                            Cancelar
+                          </button>
+                          <button className="primaryLinkButton" disabled={conversionState === "converting"} type="submit">
+                            {conversionState === "converting" ? "Criando lead…" : "Criar e vincular lead"}
+                          </button>
+                        </div>
+                      </form>
+                    </section>
+                  </div>
                 ) : null}
 
                 <div className="inboxPolicyNotice">
@@ -499,6 +608,37 @@ function FilterButton({
       {children}
     </button>
   );
+}
+
+function ConversationAction({
+  conversation,
+  onConvert
+}: {
+  conversation: WhatsappConversation;
+  onConvert: () => void;
+}) {
+  const action = getConversionAction({
+    qualificationStatus: conversation.qualificationStatus,
+    leadId: conversation.leadId
+  });
+
+  if (action.kind === "open" && conversation.leadId) {
+    return (
+      <Link className="inboxConversationLeadAction" href={`/leads/${conversation.leadId}`}>
+        {action.label}
+      </Link>
+    );
+  }
+
+  if (action.kind === "convert") {
+    return (
+      <button className="inboxConversationLeadAction" onClick={onConvert} type="button">
+        {action.label}
+      </button>
+    );
+  }
+
+  return <span className="inboxConversationLeadHint">{action.label}</span>;
 }
 
 function formatChatTime(value: string | null): string {

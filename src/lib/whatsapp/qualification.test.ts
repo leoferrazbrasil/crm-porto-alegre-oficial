@@ -42,7 +42,12 @@ describe("whatsapp qualification flow", () => {
     expect(
       validateLeadConversion(
         { ...negotiationConversation, qualificationStatus: "new" },
-        { companyName: "Empresa", segment: "Serviços" }
+        {
+          companyName: "Empresa",
+          segment: "Serviços",
+          nextAction: "Agendar diagnóstico",
+          nextActionAt: "2026-08-05T14:00:00.000Z"
+        }
       )
     ).toEqual({
       ok: false,
@@ -52,7 +57,12 @@ describe("whatsapp qualification flow", () => {
     expect(
       validateLeadConversion(
         { ...negotiationConversation, leadId: "lead-1" },
-        { companyName: "Empresa", segment: "Serviços" }
+        {
+          companyName: "Empresa",
+          segment: "Serviços",
+          nextAction: "Agendar diagnóstico",
+          nextActionAt: "2026-08-05T14:00:00.000Z"
+        }
       )
     ).toEqual({
       ok: false,
@@ -62,11 +72,13 @@ describe("whatsapp qualification flow", () => {
     expect(
       validateLeadConversion(negotiationConversation, {
         companyName: "",
-        segment: "Serviços"
+        segment: "Serviços",
+        nextAction: "Agendar diagnóstico",
+        nextActionAt: "2026-08-05T14:00:00.000Z"
       })
     ).toEqual({
       ok: false,
-      message: "Informe a empresa e o segmento antes de converter."
+      message: "Informe empresa, segmento, próxima ação e data antes de converter."
     });
   });
 
@@ -74,9 +86,13 @@ describe("whatsapp qualification flow", () => {
     expect(
       buildLeadPayloadFromConversation(
         negotiationConversation,
-        { companyName: "Empresa Teste", segment: "Serviços" },
-        "owner-1",
-        "2026-08-04T13:00:00.000Z"
+        {
+          companyName: "Empresa Teste",
+          segment: "Serviços",
+          nextAction: "Agendar diagnóstico",
+          nextActionAt: "2026-08-05T14:00:00.000Z"
+        },
+        "owner-1"
       )
     ).toEqual({
       company_name: "Empresa Teste",
@@ -89,8 +105,8 @@ describe("whatsapp qualification flow", () => {
       estimated_value: 0,
       recurring_value: null,
       probability: 0,
-      next_action: "Realizar diagnóstico comercial",
-      next_action_at: "2026-08-04T13:00:00.000Z",
+      next_action: "Agendar diagnóstico",
+      next_action_at: "2026-08-05T14:00:00.000Z",
       loss_reason: null
     });
   });

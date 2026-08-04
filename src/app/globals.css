@@ -1384,6 +1384,35 @@ td:first-child span {
   text-align: right;
 }
 
+.inboxConversationLeadAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 12px;
+  color: var(--pa-white);
+  background: var(--pa-black-green);
+  border: 1px solid var(--pa-black-green);
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.inboxConversationLeadAction:hover,
+.inboxConversationLeadAction:focus-visible {
+  background: var(--pa-teal);
+  border-color: var(--pa-teal);
+  outline: none;
+}
+
+.inboxConversationLeadHint {
+  color: var(--pa-graphite-60);
+  font-size: 10px;
+  font-weight: 700;
+}
+
 .routineSection {
   max-width: 1500px;
   padding: 0;
@@ -1642,6 +1671,153 @@ td:first-child span {
   box-shadow: 0 0 0 3px rgba(42, 98, 131, 0.12);
 }
 
+.inboxConversionOverlay {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: flex;
+  justify-content: flex-end;
+  background: rgba(20, 25, 23, 0.48);
+}
+
+.inboxConversionDialog {
+  width: min(460px, 100%);
+  height: 100%;
+  overflow-y: auto;
+  padding: 24px;
+  background: var(--pa-white);
+  box-shadow: -12px 0 30px rgba(20, 25, 23, 0.16);
+}
+
+.inboxConversionDialogHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--pa-hairline);
+}
+
+.inboxConversionDialogHeader > div {
+  display: grid;
+  gap: 6px;
+}
+
+.inboxConversionDialogHeader h3 {
+  margin: 0;
+  color: var(--pa-black);
+  font: 700 22px/1.15 var(--font-display);
+}
+
+.inboxConversionDialogHeader p:last-child {
+  margin: 0;
+  color: var(--pa-graphite-60);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.inboxDialogClose {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  place-items: center;
+  color: var(--pa-graphite);
+  background: var(--pa-surface-tint);
+  border: 1px solid var(--pa-hairline);
+  border-radius: 3px;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.inboxDialogClose:hover,
+.inboxDialogClose:focus-visible {
+  color: var(--pa-black);
+  border-color: var(--pa-teal);
+  outline: none;
+}
+
+.inboxConversionReadonly {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0;
+  padding: 14px;
+  background: var(--pa-surface-tint);
+  border: 1px solid var(--pa-hairline);
+  border-radius: 3px;
+}
+
+.inboxConversionReadonly div {
+  display: grid;
+  gap: 3px;
+}
+
+.inboxConversionReadonly span {
+  color: var(--pa-graphite-60);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.inboxConversionReadonly strong {
+  color: var(--pa-black);
+  font-size: 13px;
+}
+
+.inboxConversionForm {
+  display: grid;
+  gap: 14px;
+}
+
+.inboxConversionForm label {
+  display: grid;
+  gap: 6px;
+  color: var(--pa-graphite);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.inboxConversionForm input,
+.inboxConversionForm textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  color: var(--pa-black);
+  background: var(--pa-white);
+  border: 1px solid var(--pa-hairline);
+  border-radius: 3px;
+  outline: none;
+  font: inherit;
+  font-weight: 400;
+  resize: vertical;
+}
+
+.inboxConversionForm input:focus,
+.inboxConversionForm textarea:focus {
+  border-color: var(--pa-teal);
+  box-shadow: 0 0 0 3px rgba(42, 98, 131, 0.12);
+}
+
+.inboxConversionError {
+  margin: 0;
+  padding: 10px 12px;
+  color: var(--pa-red);
+  background: rgba(173, 42, 24, 0.08);
+  border: 1px solid rgba(173, 42, 24, 0.2);
+  border-radius: 3px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.inboxConversionActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 6px;
+}
+
 .inboxPolicyNotice {
   padding: 9px 20px;
   color: var(--pa-teal);
@@ -1881,6 +2057,24 @@ td:first-child span {
 
   .inboxLeadConversionFields {
     grid-template-columns: 1fr;
+  }
+
+  .inboxConversionOverlay {
+    align-items: stretch;
+  }
+
+  .inboxConversionDialog {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .inboxConversionActions {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+  }
+
+  .inboxConversionActions button {
+    min-height: 44px;
   }
 
   .headerMeta {

@@ -19,6 +19,8 @@ export interface QualifiedConversation {
 export interface LeadConversionInput {
   companyName: string;
   segment: string;
+  nextAction: string;
+  nextActionAt: string;
 }
 
 const QUALIFICATION_STATUS_LABELS: Record<
@@ -80,10 +82,22 @@ export function validateLeadConversion(
     };
   }
 
-  if (!input.companyName.trim() || !input.segment.trim()) {
+  if (
+    !input.companyName.trim() ||
+    !input.segment.trim() ||
+    !input.nextAction.trim() ||
+    !input.nextActionAt.trim()
+  ) {
     return {
       ok: false,
-      message: "Informe a empresa e o segmento antes de converter."
+      message: "Informe empresa, segmento, próxima ação e data antes de converter."
+    };
+  }
+
+  if (Number.isNaN(new Date(input.nextActionAt).getTime())) {
+    return {
+      ok: false,
+      message: "Informe uma data válida para a próxima ação."
     };
   }
 
@@ -93,8 +107,7 @@ export function validateLeadConversion(
 export function buildLeadPayloadFromConversation(
   conversation: QualifiedConversation,
   input: LeadConversionInput,
-  ownerId: string,
-  nextActionAt: string
+  ownerId: string
 ): LeadPayload {
   return {
     company_name: input.companyName.trim(),
@@ -107,8 +120,8 @@ export function buildLeadPayloadFromConversation(
     estimated_value: 0,
     recurring_value: null,
     probability: 0,
-    next_action: "Realizar diagnóstico comercial",
-    next_action_at: nextActionAt,
+    next_action: input.nextAction.trim(),
+    next_action_at: new Date(input.nextActionAt).toISOString(),
     loss_reason: null
   };
 }
@@ -124,8 +137,7 @@ export async function createLeadFromQualifiedConversation(
   instanceId: string,
   phone: string,
   ownerId: string,
-  input: LeadConversionInput,
-  now: string = new Date().toISOString()
+  input: LeadConversionInput
 ): Promise<LeadConversionResult> {
   const persistedConversation = await getConversation(client, instanceId, phone);
 
@@ -140,7 +152,7 @@ export async function createLeadFromQualifiedConversation(
 
   const { data: lead, error: leadError } = await client
     .from("leads")
-    .insert(buildLeadPayloadFromConversation(conversation, input, ownerId, now))
+    .insert(buildLeadPayloadFromConversation(conversation, input, ownerId))
     .select("id")
     .single();
 
