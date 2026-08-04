@@ -20,7 +20,7 @@ describe("buildDashboardViewModel", () => {
 
     expect(dashboard.activeLeads[0]?.id).toBe("lead-006");
     expect(dashboard.openTasks[0]?.id).toBe("task-001");
-    expect(dashboard.pipeline).toHaveLength(10);
+    expect(dashboard.pipeline).toHaveLength(6);
     expect(dashboard.summary.totalLeads).toBe(10);
   });
 
@@ -29,7 +29,7 @@ describe("buildDashboardViewModel", () => {
       conversationsStarted: 12,
       validContacts: 9,
       qualifyingContacts: 6,
-      qualifiedContacts: 4,
+      negotiationContacts: 4,
       leadsCreated: 4,
       negotiations: 2,
       wonDeals: 1,

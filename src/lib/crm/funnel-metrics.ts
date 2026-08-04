@@ -48,7 +48,7 @@ export interface FunnelMetrics {
   conversationsStarted: number;
   validContacts: number;
   qualifyingContacts: number;
-  qualifiedContacts: number;
+  negotiationContacts: number;
   leadsCreated: number;
   negotiations: number;
   wonDeals: number;
@@ -62,9 +62,12 @@ export interface FunnelMetrics {
 }
 
 const VALID_CONTACT_STATUSES = new Set([
+  "new",
   "qualifying",
-  "qualified",
-  "not_interested"
+  "negotiation",
+  "proposal",
+  "won",
+  "lost"
 ]);
 
 export function calculateFunnelMetrics(
@@ -79,7 +82,7 @@ export function calculateFunnelMetrics(
   const linkedLeadIds = new Set<string>();
   let validContacts = 0;
   let qualifyingContacts = 0;
-  let qualifiedContacts = 0;
+  let negotiationContacts = 0;
 
   for (const conversation of cohortConversations) {
     const conversationEvents = eventsByConversation.get(conversation.id) ?? [];
@@ -96,7 +99,9 @@ export function calculateFunnelMetrics(
       validContacts += 1;
     }
     if (statuses.has("qualifying")) qualifyingContacts += 1;
-    if (statuses.has("qualified")) qualifiedContacts += 1;
+    if (["negotiation", "proposal", "won"].some((status) => statuses.has(status))) {
+      negotiationContacts += 1;
+    }
     if (conversation.leadId) linkedLeadIds.add(conversation.leadId);
   }
 
@@ -115,11 +120,11 @@ export function calculateFunnelMetrics(
     }
 
     if (stages.has("Negociação")) negotiations += 1;
-    if (stages.has("Fechado ganho")) {
+    if (stages.has("Ganho")) {
       wonDeals += 1;
       revenueGenerated += lead?.estimatedValue ?? 0;
     }
-    if (stages.has("Fechado perdido")) lostDeals += 1;
+    if (stages.has("Perdido")) lostDeals += 1;
   }
 
   const responseStats = calculateFirstResponseStats(
@@ -130,7 +135,7 @@ export function calculateFunnelMetrics(
     conversationsStarted: cohortConversations.length,
     validContacts,
     qualifyingContacts,
-    qualifiedContacts,
+    negotiationContacts,
     leadsCreated: linkedLeadIds.size,
     negotiations,
     wonDeals,
@@ -142,8 +147,8 @@ export function calculateFunnelMetrics(
     medianFirstResponseMinutes: responseStats.medianFirstResponseMinutes,
     rates: {
       validContact: percentage(validContacts, cohortConversations.length),
-      qualification: percentage(qualifiedContacts, validContacts),
-      leadConversion: percentage(linkedLeadIds.size, qualifiedContacts),
+      qualification: percentage(negotiationContacts, validContacts),
+      leadConversion: percentage(linkedLeadIds.size, negotiationContacts),
       negotiation: percentage(negotiations, linkedLeadIds.size),
       win: percentage(wonDeals, negotiations),
       loss: percentage(lostDeals, negotiations),

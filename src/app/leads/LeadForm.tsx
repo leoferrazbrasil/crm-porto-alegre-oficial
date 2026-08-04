@@ -108,8 +108,8 @@ export function LeadForm({ lead, mode }: LeadFormProps) {
           </label>
 
           <label>
-            Etapa do pipeline
-            <select name="stage" required defaultValue={lead?.stage ?? "Mapeado"}>
+            Etapa do funil
+            <select name="stage" required defaultValue={lead?.stage ?? "Novo"}>
               {PIPELINE_STAGES.map((stage) => (
                 <option key={stage} value={stage}>
                   {stage}
@@ -181,7 +181,7 @@ export function LeadForm({ lead, mode }: LeadFormProps) {
           Motivo de perda
           <textarea
             name="lossReason"
-            placeholder="Preencher apenas quando o lead for marcado como Fechado perdido"
+            placeholder="Preencher apenas quando o lead for marcado como Perdido"
             rows={3}
             defaultValue={lead?.lossReason}
           />

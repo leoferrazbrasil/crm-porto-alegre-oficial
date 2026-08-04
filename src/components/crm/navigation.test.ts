@@ -6,10 +6,10 @@ import { describe, expect, it } from "vitest";
 import { CRM_NAV_ITEMS, getCrmNavItemClassName } from "./navigation";
 
 describe("CRM sidebar navigation", () => {
-  it("exposes the six primary modules including Pipeline", () => {
+  it("exposes the six primary modules including Funil de Vendas", () => {
     expect(CRM_NAV_ITEMS.map((item) => item.label)).toEqual([
       "Visão Geral",
-      "Pipeline",
+      "Funil de Vendas",
       "Leads",
       "Conversas",
       "WhatsApp",
@@ -30,15 +30,15 @@ describe("CRM sidebar navigation", () => {
       "navItem navItemActive"
     );
     expect(getCrmNavItemClassName("leads", "overview")).toBe("navItem");
-    expect(getCrmNavItemClassName("pipeline", "pipeline")).toBe(
+    expect(getCrmNavItemClassName("funnel", "funnel")).toBe(
       "navItem navItemActive"
     );
-    expect(getCrmNavItemClassName("overview", "pipeline")).toBe("navItem");
+    expect(getCrmNavItemClassName("overview", "funnel")).toBe("navItem");
   });
 
   it.each([
     ["src/app/page.tsx", 'activeItem="overview"'],
-    ["src/app/pipeline/page.tsx", 'activeItem="pipeline"'],
+    ["src/app/funil/page.tsx", 'activeItem="funnel"'],
     ["src/app/leads/page.tsx", 'activeItem="leads"'],
     ["src/app/leads/novo/page.tsx", 'activeItem="leads"'],
     ["src/app/leads/[id]/page.tsx", 'activeItem="leads"'],

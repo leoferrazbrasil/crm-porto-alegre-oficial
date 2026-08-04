@@ -9,48 +9,49 @@ import {
   type QualifiedConversation
 } from "./qualification";
 
-const qualifiedConversation: QualifiedConversation = {
+const negotiationConversation: QualifiedConversation = {
   id: "conversation-1",
   phone: "5511999999999",
   name: "Lead Teste",
   leadId: null,
-  qualificationStatus: "qualified"
+  qualificationStatus: "negotiation"
 };
 
 describe("whatsapp qualification flow", () => {
   it("accepts only the supported qualification statuses", () => {
     expect(parseQualificationStatus("qualifying")).toBe("qualifying");
-    expect(parseQualificationStatus(" qualified ")).toBe("qualified");
+    expect(parseQualificationStatus(" proposal ")).toBe("proposal");
     expect(parseQualificationStatus("unknown")).toBeNull();
     expect(parseQualificationStatus(null)).toBeNull();
   });
 
-  it("exposes the conversion action only for qualified unlinked contacts", () => {
+  it("exposes the conversion action only for negotiation unlinked contacts", () => {
     expect(qualificationStatusLabel("new")).toBe("Novo");
-    expect(qualificationStatusLabel("not_interested")).toBe("Sem interesse");
-    expect(canConvertConversation(qualifiedConversation)).toBe(true);
+    expect(qualificationStatusLabel("proposal")).toBe("Proposta");
+    expect(qualificationStatusLabel("lost")).toBe("Perdido");
+    expect(canConvertConversation(negotiationConversation)).toBe(true);
     expect(
-      canConvertConversation({ ...qualifiedConversation, leadId: "lead-1" })
+      canConvertConversation({ ...negotiationConversation, leadId: "lead-1" })
     ).toBe(false);
     expect(
-      canConvertConversation({ ...qualifiedConversation, qualificationStatus: "qualifying" })
+      canConvertConversation({ ...negotiationConversation, qualificationStatus: "qualifying" })
     ).toBe(false);
   });
 
-  it("requires a qualified unlinked conversation before conversion", () => {
+  it("requires a negotiation unlinked conversation before conversion", () => {
     expect(
       validateLeadConversion(
-        { ...qualifiedConversation, qualificationStatus: "new" },
+        { ...negotiationConversation, qualificationStatus: "new" },
         { companyName: "Empresa", segment: "Serviços" }
       )
     ).toEqual({
       ok: false,
-      message: "A conversa precisa estar marcada como Qualificado."
+      message: "A conversa precisa estar marcada como Negociação."
     });
 
     expect(
       validateLeadConversion(
-        { ...qualifiedConversation, leadId: "lead-1" },
+        { ...negotiationConversation, leadId: "lead-1" },
         { companyName: "Empresa", segment: "Serviços" }
       )
     ).toEqual({
@@ -59,7 +60,7 @@ describe("whatsapp qualification flow", () => {
     });
 
     expect(
-      validateLeadConversion(qualifiedConversation, {
+      validateLeadConversion(negotiationConversation, {
         companyName: "",
         segment: "Serviços"
       })
@@ -69,10 +70,10 @@ describe("whatsapp qualification flow", () => {
     });
   });
 
-  it("builds an inbound lead payload from a qualified conversation", () => {
+  it("builds an inbound lead payload from a negotiation conversation", () => {
     expect(
       buildLeadPayloadFromConversation(
-        qualifiedConversation,
+        negotiationConversation,
         { companyName: "Empresa Teste", segment: "Serviços" },
         "owner-1",
         "2026-08-04T13:00:00.000Z"
@@ -83,7 +84,7 @@ describe("whatsapp qualification flow", () => {
       segment: "Serviços",
       source: "Inbound",
       instagram_profile: null,
-      stage: "Contato iniciado",
+      stage: "Negociação",
       owner_id: "owner-1",
       estimated_value: 0,
       recurring_value: null,

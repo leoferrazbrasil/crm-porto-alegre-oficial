@@ -11,7 +11,7 @@ const leads: Lead[] = [
     contactName: "Ana",
     segment: "Gastronomia",
     source: "Prospecção ativa",
-    stage: "Proposta enviada",
+    stage: "Proposta",
     owner: "Leonardo",
     estimatedValue: 10_000,
     probability: 60,
@@ -41,7 +41,7 @@ const leads: Lead[] = [
     contactName: "Carla",
     segment: "Saúde",
     source: "Inbound",
-    stage: "Fechado ganho",
+    stage: "Ganho",
     owner: "Leonardo",
     estimatedValue: 5_000,
     probability: 100,
@@ -56,7 +56,7 @@ const leads: Lead[] = [
     contactName: "Diego",
     segment: "Varejo",
     source: "Prospecção ativa",
-    stage: "Fechado perdido",
+    stage: "Perdido",
     owner: "Leonardo",
     estimatedValue: 3_000,
     probability: 0,
@@ -95,10 +95,10 @@ describe("groupLeadsByStage", () => {
 
     expect(groups.map((group) => group.stage)).toEqual(PIPELINE_STAGES);
     expect(
-      groups.find((group) => group.stage === "Proposta enviada")?.leads
+      groups.find((group) => group.stage === "Proposta")?.leads
     ).toHaveLength(1);
     expect(
-      groups.find((group) => group.stage === "Mapeado")?.leads
+      groups.find((group) => group.stage === "Novo")?.leads
     ).toHaveLength(0);
   });
 });

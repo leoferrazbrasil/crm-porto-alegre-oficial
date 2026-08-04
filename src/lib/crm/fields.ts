@@ -48,7 +48,7 @@ export const CRM_FIELD_DEFINITIONS: readonly CrmFieldDefinition[] = [
   field(16, "Data do opt-in", "data", false, "2026-07-29", "Obrigatória se opt-in verdadeiro"),
   field(17, "Prova do opt-in", "texto", false, "Link ou nota", "Origem auditável"),
   field(18, "Responsável interno", "lista", true, "Leonardo", "Um único owner"),
-  field(19, "Etapa", "lista", true, "Mapeado", "Etapas oficiais do pipeline"),
+  field(19, "Etapa", "lista", true, "Novo", "Etapas oficiais do funil de vendas"),
   field(20, "Status da próxima ação", "lista", true, "Pendente", "Pendente; concluída; vencida"),
   field(21, "Próxima ação", "texto", true, "Enviar follow-up", "Nenhuma oportunidade sem ação"),
   field(22, "Data da próxima ação", "data", true, "2026-07-31", "Obrigatória"),

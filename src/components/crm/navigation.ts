@@ -1,6 +1,6 @@
 export const CRM_NAV_ITEMS = [
   { id: "overview", label: "Visão Geral", href: "/" },
-  { id: "pipeline", label: "Pipeline", href: "/pipeline" },
+  { id: "funnel", label: "Funil de Vendas", href: "/funil" },
   { id: "leads", label: "Leads", href: "/leads" },
   { id: "conversations", label: "Conversas", href: "/conversas" },
   { id: "whatsapp", label: "WhatsApp", href: "/integracoes/whatsapp" },

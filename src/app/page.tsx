@@ -50,7 +50,7 @@ export default async function Home() {
             <p className="eyebrow accentText">Operação comercial</p>
             <h1>Visão geral do CRM</h1>
             <p className="headerDescription">
-              Pipeline, próximas ações e metas da Porto Alegre Oficial em uma
+              Funil de vendas, próximas ações e metas da Porto Alegre Oficial em uma
               única rotina operacional.
             </p>
           </div>
@@ -121,8 +121,8 @@ export default async function Home() {
               <strong>{funnelMetrics.qualifyingContacts}</strong>
             </div>
             <div>
-              <span>Qualificados</span>
-              <strong>{funnelMetrics.qualifiedContacts}</strong>
+              <span>Em negociação</span>
+              <strong>{funnelMetrics.negotiationContacts}</strong>
             </div>
             <div>
               <span>Aguardando primeira resposta</span>

@@ -27,10 +27,10 @@ const QUALIFICATION_STATUS_LABELS: Record<
 > = {
   new: "Novo",
   qualifying: "Qualificando",
-  qualified: "Qualificado",
-  not_interested: "Sem interesse",
-  mistake: "Engano",
-  spam: "Spam"
+  negotiation: "Negociação",
+  proposal: "Proposta",
+  won: "Ganho",
+  lost: "Perdido"
 };
 
 export function qualificationStatusLabel(
@@ -42,7 +42,7 @@ export function qualificationStatusLabel(
 export function canConvertConversation(
   conversation: QualifiedConversation
 ): boolean {
-  return conversation.qualificationStatus === "qualified" && !conversation.leadId;
+  return conversation.qualificationStatus === "negotiation" && !conversation.leadId;
 }
 
 export type LeadConversionValidation =
@@ -66,10 +66,10 @@ export function validateLeadConversion(
   conversation: QualifiedConversation,
   input: LeadConversionInput
 ): LeadConversionValidation {
-  if (conversation.qualificationStatus !== "qualified") {
+  if (conversation.qualificationStatus !== "negotiation") {
     return {
       ok: false,
-      message: "A conversa precisa estar marcada como Qualificado."
+      message: "A conversa precisa estar marcada como Negociação."
     };
   }
 
@@ -102,7 +102,7 @@ export function buildLeadPayloadFromConversation(
     segment: input.segment.trim(),
     source: "Inbound",
     instagram_profile: null,
-    stage: "Contato iniciado",
+    stage: "Negociação",
     owner_id: ownerId,
     estimated_value: 0,
     recurring_value: null,

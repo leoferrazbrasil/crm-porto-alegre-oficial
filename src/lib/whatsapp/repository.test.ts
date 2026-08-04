@@ -66,7 +66,7 @@ describe("whatsapp repository", () => {
   it("updates only the selected conversation qualification status", async () => {
     const calls: Array<{ table: string; method: string; payload?: unknown }> = [];
     const client = fakeClient(
-      { conversationStatus: { id: "conversation-1", qualification_status: "qualified" } },
+      { conversationStatus: { id: "conversation-1", qualification_status: "negotiation" } },
       calls
     ) as unknown as SupabaseClient;
 
@@ -75,18 +75,18 @@ describe("whatsapp repository", () => {
         client,
         "instance-1",
         "5511999999999",
-        "qualified" as WhatsappQualificationStatus
+        "negotiation" as WhatsappQualificationStatus
       )
     ).resolves.toEqual({
       ok: true,
-      qualificationStatus: "qualified"
+      qualificationStatus: "negotiation"
     });
 
     expect(calls).toEqual([
       {
         table: "whatsapp_conversations",
         method: "update",
-        payload: { qualification_status: "qualified" }
+        payload: { qualification_status: "negotiation" }
       }
     ]);
   });

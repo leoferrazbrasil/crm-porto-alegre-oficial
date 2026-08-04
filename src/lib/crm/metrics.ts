@@ -10,9 +10,9 @@ export function calculateCrmSummary(
   referenceDate = new Date()
 ): CrmSummary {
   const activeLeads = leads.filter((lead) => !isClosedStage(lead.stage));
-  const wonDeals = leads.filter((lead) => lead.stage === "Fechado ganho").length;
+  const wonDeals = leads.filter((lead) => lead.stage === "Ganho").length;
   const lostDeals = leads.filter(
-    (lead) => lead.stage === "Fechado perdido"
+    (lead) => lead.stage === "Perdido"
   ).length;
   const decidedDeals = wonDeals + lostDeals;
 

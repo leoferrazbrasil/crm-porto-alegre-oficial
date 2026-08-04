@@ -17,6 +17,7 @@ describe("auth proxy route decisions", () => {
 
   it("redirects unauthenticated CRM requests to login", () => {
     expect(getAuthRedirect("/", false)).toBe("/login");
+    expect(getAuthRedirect("/funil", false)).toBe("/login");
     expect(getAuthRedirect("/pipeline", false)).toBe("/login");
   });
 

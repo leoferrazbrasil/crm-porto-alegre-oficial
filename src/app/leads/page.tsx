@@ -23,7 +23,7 @@ export default async function LeadsPage() {
       <main className="mainContent">
         <header className="pageHeader">
           <div>
-            <p className="eyebrow accentText">Pipeline comercial</p>
+            <p className="eyebrow accentText">Funil de vendas</p>
             <h1>Leads e oportunidades</h1>
             <p className="headerDescription">
               Cadastro operacional dos leads da Porto Alegre Oficial, com etapa,
@@ -91,7 +91,7 @@ export default async function LeadsPage() {
             <div className="emptyState">
               <h3>Nenhum lead cadastrado ainda</h3>
               <p>
-                Cadastre a primeira oportunidade para alimentar o pipeline real
+                Cadastre a primeira oportunidade para alimentar o funil real
                 do CRM.
               </p>
               <Link className="primaryLinkButton" href="/leads/novo">

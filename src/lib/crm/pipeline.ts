@@ -1,25 +1,21 @@
 export const PIPELINE_STAGES = [
-  "Mapeado",
-  "Contato iniciado",
-  "Engajado",
-  "Qualificado",
-  "Diagnóstico",
-  "Solução apresentada",
-  "Proposta enviada",
+  "Novo",
+  "Qualificando",
   "Negociação",
-  "Fechado ganho",
-  "Fechado perdido"
+  "Proposta",
+  "Ganho",
+  "Perdido"
 ] as const;
 
 export type PipelineStage = (typeof PIPELINE_STAGES)[number];
 
 export const CLOSED_STAGES: readonly PipelineStage[] = [
-  "Fechado ganho",
-  "Fechado perdido"
+  "Ganho",
+  "Perdido"
 ];
 
 export const PROPOSAL_STAGES: readonly PipelineStage[] = [
-  "Proposta enviada",
+  "Proposta",
   "Negociação"
 ];
 

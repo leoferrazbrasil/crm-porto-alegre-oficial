@@ -10,13 +10,13 @@ const period = {
 
 const events: FunnelEvent[] = [
   event("conversation_status_changed", "conversation-1", null, "qualifying", "2026-08-02T10:00:00.000Z"),
-  event("conversation_status_changed", "conversation-1", null, "qualified", "2026-08-02T11:00:00.000Z"),
+  event("conversation_status_changed", "conversation-1", null, "negotiation", "2026-08-02T11:00:00.000Z"),
   event("conversation_lead_linked", "conversation-1", "lead-1", null, "2026-08-02T11:05:00.000Z"),
   event("lead_stage_changed", null, "lead-1", "Negociação", "2026-08-03T10:00:00.000Z"),
-  event("lead_stage_changed", null, "lead-1", "Fechado ganho", "2026-08-04T10:00:00.000Z"),
-  event("conversation_status_changed", "conversation-2", null, "mistake", "2026-08-03T10:00:00.000Z"),
+  event("lead_stage_changed", null, "lead-1", "Ganho", "2026-08-04T10:00:00.000Z"),
+  event("conversation_status_changed", "conversation-2", null, "lost", "2026-08-03T10:00:00.000Z"),
   event("conversation_status_changed", "conversation-3", null, "qualifying", "2026-08-04T10:00:00.000Z"),
-  event("conversation_status_changed", "conversation-3", null, "not_interested", "2026-08-04T11:00:00.000Z")
+  event("conversation_status_changed", "conversation-3", null, "lost", "2026-08-04T11:00:00.000Z")
 ];
 
 describe("calculateFunnelMetrics", () => {
@@ -24,13 +24,13 @@ describe("calculateFunnelMetrics", () => {
     const metrics = calculateFunnelMetrics(
       {
         conversations: [
-          conversation("conversation-1", "qualified", "lead-1", "2026-08-02T09:00:00.000Z"),
-          conversation("conversation-2", "mistake", null, "2026-08-03T09:00:00.000Z"),
-          conversation("conversation-3", "not_interested", null, "2026-08-04T09:00:00.000Z"),
-          conversation("conversation-old", "qualified", "lead-old", "2026-07-31T09:00:00.000Z")
+          conversation("conversation-1", "negotiation", "lead-1", "2026-08-02T09:00:00.000Z"),
+          conversation("conversation-2", "lost", null, "2026-08-03T09:00:00.000Z"),
+          conversation("conversation-3", "lost", null, "2026-08-04T09:00:00.000Z"),
+          conversation("conversation-old", "negotiation", "lead-old", "2026-07-31T09:00:00.000Z")
         ],
         leads: [
-          { id: "lead-1", stage: "Fechado ganho", estimatedValue: 12000 },
+          { id: "lead-1", stage: "Ganho", estimatedValue: 12000 },
           { id: "lead-old", stage: "Negociação", estimatedValue: 5000 }
         ],
         events,
@@ -41,9 +41,9 @@ describe("calculateFunnelMetrics", () => {
 
     expect(metrics).toMatchObject({
       conversationsStarted: 3,
-      validContacts: 2,
+      validContacts: 3,
       qualifyingContacts: 2,
-      qualifiedContacts: 1,
+      negotiationContacts: 1,
       leadsCreated: 1,
       negotiations: 1,
       wonDeals: 1,
@@ -52,8 +52,8 @@ describe("calculateFunnelMetrics", () => {
       revenueGenerated: 12000,
       averageTicket: 12000,
       rates: {
-        validContact: 66.66666666666666,
-        qualification: 50,
+        validContact: 100,
+        qualification: 33.33333333333333,
         leadConversion: 100,
         negotiation: 100,
         win: 100,
@@ -117,12 +117,12 @@ describe("calculateFunnelMetrics", () => {
     const metrics = calculateFunnelMetrics(
       {
         conversations: [
-          conversation("conversation-1", "qualified", "lead-1", "2026-08-02T09:00:00.000Z"),
-          conversation("conversation-2", "qualified", "lead-2", "2026-08-03T09:00:00.000Z")
+          conversation("conversation-1", "negotiation", "lead-1", "2026-08-02T09:00:00.000Z"),
+          conversation("conversation-2", "negotiation", "lead-2", "2026-08-03T09:00:00.000Z")
         ],
         leads: [
-          { id: "lead-1", stage: "Fechado ganho", estimatedValue: 12000 },
-          { id: "lead-2", stage: "Fechado perdido", estimatedValue: 9000 }
+          { id: "lead-1", stage: "Ganho", estimatedValue: 12000 },
+          { id: "lead-2", stage: "Perdido", estimatedValue: 9000 }
         ],
         events: [],
         messages: []

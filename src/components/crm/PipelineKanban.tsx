@@ -11,14 +11,14 @@ interface PipelineKanbanProps {
 }
 
 export function PipelineKanban({ columns }: PipelineKanbanProps) {
-  const [selectedStage, setSelectedStage] = useState(columns[0]?.stage ?? "Mapeado");
+  const [selectedStage, setSelectedStage] = useState(columns[0]?.stage ?? "Novo");
 
   return (
     <div className="kanbanWorkspace">
       <label className="kanbanMobileSelector">
-        Etapa exibida no celular
+          Etapa exibida no celular
         <select
-          aria-label="Selecionar etapa do pipeline"
+          aria-label="Selecionar etapa do funil"
           onChange={(event) => {
             const nextColumn = columns.find(
               (column) => column.stage === event.target.value
@@ -35,7 +35,7 @@ export function PipelineKanban({ columns }: PipelineKanbanProps) {
         </select>
       </label>
 
-      <div className="kanbanBoard" aria-label="Pipeline comercial em formato Kanban">
+      <div className="kanbanBoard" aria-label="Funil de vendas em formato Kanban">
         {columns.map((column, index) => (
           <section
             className={`kanbanColumn${column.stage === selectedStage ? " kanbanColumnSelected" : ""}`}

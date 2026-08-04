@@ -7,7 +7,7 @@ const metrics = {
   conversationsStarted: 10,
   validContacts: 8,
   qualifyingContacts: 6,
-  qualifiedContacts: 5,
+  negotiationContacts: 5,
   leadsCreated: 5,
   negotiations: 4,
   wonDeals: 2,

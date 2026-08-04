@@ -30,7 +30,7 @@ export function buildDashboardViewModel(
     activeLeads: leads
       .filter(
         (lead) =>
-          lead.stage !== "Fechado ganho" && lead.stage !== "Fechado perdido"
+          lead.stage !== "Ganho" && lead.stage !== "Perdido"
       )
       .sort(
         (first, second) =>

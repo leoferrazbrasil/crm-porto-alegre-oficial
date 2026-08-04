@@ -36,7 +36,7 @@ export async function PATCH(
 
   if (!status) {
     return NextResponse.json(
-      { ok: false, message: "Estado de qualificação inválido." },
+      { ok: false, message: "Estado da jornada inválido." },
       { status: 400 }
     );
   }

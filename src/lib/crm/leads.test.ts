@@ -12,7 +12,7 @@ describe("mapLeadRow", () => {
         segment: "Gastronomia",
         source: "Instagram",
         instagram_profile: "@restauranteorla",
-        stage: "Qualificado",
+        stage: "Negociação",
         owner_id: "owner-1",
         estimated_value: "12000.50",
         recurring_value: "2000",
@@ -30,7 +30,7 @@ describe("mapLeadRow", () => {
       segment: "Gastronomia",
       source: "Instagram",
       instagramProfile: "@restauranteorla",
-      stage: "Qualificado",
+      stage: "Negociação",
       owner: "Leonardo",
       estimatedValue: 12000.5,
       recurringValue: 2000,
@@ -75,7 +75,7 @@ describe("parseLeadForm", () => {
         segment: "Gastronomia",
         source: "Instagram",
         instagramProfile: "@restauranteorla",
-        stage: "Qualificado",
+        stage: "Negociação",
         estimatedValue: 12000,
         recurringValue: 2000,
         probability: 30,
@@ -102,7 +102,7 @@ describe("buildLeadPayload", () => {
       segment: "Gastronomia",
       source: "Instagram",
       instagram_profile: "@restauranteorla",
-      stage: "Qualificado",
+        stage: "Negociação",
       owner_id: "owner-1",
       estimated_value: 12000,
       recurring_value: 2000,
@@ -121,7 +121,7 @@ function validLeadFormData(): FormData {
   formData.set("segment", "Gastronomia");
   formData.set("source", "Instagram");
   formData.set("instagramProfile", "@restauranteorla");
-  formData.set("stage", "Qualificado");
+  formData.set("stage", "Negociação");
   formData.set("estimatedValue", "12000");
   formData.set("recurringValue", "2000");
   formData.set("probability", "30");

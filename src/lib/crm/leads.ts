@@ -214,7 +214,7 @@ function normalizeLeadSource(value: string): LeadSource {
 }
 
 function normalizePipelineStage(value: string): PipelineStage {
-  return isPipelineStage(value) ? value : "Mapeado";
+  return isPipelineStage(value) ? value : "Novo";
 }
 
 function isLeadSource(value: string): value is LeadSource {

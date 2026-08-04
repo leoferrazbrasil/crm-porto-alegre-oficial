@@ -399,7 +399,7 @@ export function WhatsAppInboxPanel() {
                   <form className="inboxLeadConversion" onSubmit={submitLeadConversion}>
                     <div>
                       <p className="eyebrow">Conversão explícita</p>
-                      <strong>Transformar contato qualificado em lead</strong>
+                      <strong>Transformar contato em lead</strong>
                       <span>
                         Informe os dados mínimos para criar a oportunidade e vinculá-la a esta conversa.
                       </span>

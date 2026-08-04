@@ -38,10 +38,10 @@ export interface WhatsappMessage {
 export const WHATSAPP_QUALIFICATION_STATUSES = [
   "new",
   "qualifying",
-  "qualified",
-  "not_interested",
-  "mistake",
-  "spam"
+  "negotiation",
+  "proposal",
+  "won",
+  "lost"
 ] as const;
 
 export type WhatsappQualificationStatus =
