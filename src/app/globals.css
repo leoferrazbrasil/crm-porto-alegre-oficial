@@ -277,6 +277,14 @@ p {
   border-top: 3px solid var(--pa-red);
 }
 
+.pipelineSummaryGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  gap: 12px;
+  max-width: 1500px;
+  margin: 0 auto 24px;
+}
+
 .funnelMetricsBlock {
   margin-bottom: 24px;
 }
@@ -1376,6 +1384,153 @@ td:first-child span {
   text-align: right;
 }
 
+.routineSection {
+  max-width: 1500px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.kanbanWorkspace {
+  min-width: 0;
+}
+
+.kanbanMobileSelector {
+  display: none;
+}
+
+.kanbanBoard {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(220px, 1fr));
+  gap: 10px;
+  min-width: 0;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.kanbanColumn {
+  min-width: 220px;
+  padding: 12px;
+  background: var(--pa-surface-tint);
+  border: 1px solid var(--pa-hairline);
+  border-top: 3px solid var(--pa-teal);
+  border-radius: 3px;
+}
+
+.kanbanColumn:nth-child(4n + 2) {
+  border-top-color: var(--pa-olive);
+}
+
+.kanbanColumn:nth-child(4n + 3) {
+  border-top-color: var(--pa-rose);
+}
+
+.kanbanColumn:nth-child(4n + 4) {
+  border-top-color: var(--pa-red);
+}
+
+.kanbanColumnHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.kanbanColumnHeader h3 {
+  margin: 5px 0 0;
+  font: 700 14px/1.25 var(--font-display);
+  color: var(--pa-black);
+}
+
+.kanbanColumnHeader > strong {
+  display: grid;
+  min-width: 28px;
+  min-height: 28px;
+  place-items: center;
+  color: var(--pa-white);
+  background: var(--pa-black-green);
+  border-radius: 50%;
+  font-size: 11px;
+}
+
+.kanbanColumnValue {
+  margin: 10px 0 12px;
+  color: var(--pa-graphite-60);
+  font-size: 11px;
+}
+
+.kanbanCards {
+  display: grid;
+  gap: 8px;
+}
+
+.kanbanLeadCard {
+  display: grid;
+  gap: 7px;
+  padding: 12px;
+  background: var(--pa-white);
+  border: 1px solid var(--pa-hairline);
+  border-radius: 3px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.kanbanLeadCardTopline,
+.kanbanLeadCardMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.kanbanLeadCardTopline {
+  color: var(--pa-graphite-60);
+  font-size: 10px;
+}
+
+.kanbanLeadCardTopline strong {
+  color: var(--pa-teal);
+}
+
+.kanbanLeadCard h4 {
+  margin: 2px 0 0;
+  color: var(--pa-black);
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.kanbanLeadCard p {
+  margin: 0;
+  color: var(--pa-graphite-60);
+  font-size: 11px;
+}
+
+.kanbanLeadCardMeta {
+  padding-top: 8px;
+  border-top: 1px solid var(--pa-hairline);
+  color: var(--pa-graphite-60);
+  font-size: 10px;
+}
+
+.kanbanLeadCardMeta strong {
+  color: var(--pa-black);
+  font-size: 12px;
+}
+
+.kanbanNextAction {
+  line-height: 1.4;
+}
+
+.kanbanEmptyColumn {
+  padding: 18px 8px;
+  color: var(--pa-graphite-60);
+  border: 1px dashed var(--pa-hairline);
+  border-radius: 3px;
+  font-size: 11px;
+  line-height: 1.45;
+  text-align: center;
+}
+
 .inboxQualificationBadge {
   display: inline-flex;
   align-items: center;
@@ -1607,6 +1762,10 @@ td:first-child span {
     grid-template-columns: repeat(3, 1fr);
   }
 
+  .pipelineSummaryGrid {
+    grid-template-columns: repeat(2, minmax(160px, 1fr));
+  }
+
   .funnelMetricGrid {
     grid-template-columns: repeat(4, minmax(110px, 1fr));
   }
@@ -1731,8 +1890,46 @@ td:first-child span {
   }
 
   .kpiGrid,
-  .goalGrid {
+  .goalGrid,
+  .pipelineSummaryGrid {
     grid-template-columns: 1fr;
+  }
+
+  .routineSection {
+    padding: 0;
+  }
+
+  .kanbanMobileSelector {
+    display: grid;
+    gap: 7px;
+    margin-bottom: 12px;
+    color: var(--pa-graphite-60);
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .kanbanMobileSelector select {
+    width: 100%;
+    min-height: 44px;
+    padding: 0 10px;
+    color: var(--pa-black);
+    background: var(--pa-white);
+    border: 1px solid var(--pa-hairline);
+    border-radius: 3px;
+  }
+
+  .kanbanBoard {
+    display: block;
+    overflow: visible;
+  }
+
+  .kanbanColumn {
+    display: none;
+    min-width: 0;
+  }
+
+  .kanbanColumnSelected {
+    display: block;
   }
 
   .funnelMetricGrid,

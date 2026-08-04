@@ -38,7 +38,7 @@ export default async function Home() {
     referenceDate,
     funnelMetrics
   );
-  const { summary } = dashboard;
+  const { openTasks } = dashboard;
 
   return (
     <div className="appShell">
@@ -59,41 +59,6 @@ export default async function Home() {
             <strong>{formatMonthLabel(referenceDate)}</strong>
           </div>
         </header>
-
-        <section className="kpiGrid" aria-label="Indicadores comerciais">
-          <article className="kpiCard">
-            <span>Oportunidades ativas</span>
-            <strong>{summary.activeOpportunities}</strong>
-            <small>{summary.totalLeads} leads cadastrados</small>
-          </article>
-          <article className="kpiCard">
-            <span>Pipeline aberto</span>
-            <strong>{formatCurrency(summary.pipelineValue)}</strong>
-            <small>Valor potencial das oportunidades</small>
-          </article>
-          <article className="kpiCard">
-            <span>Forecast ponderado</span>
-            <strong>{formatCurrency(summary.weightedForecast)}</strong>
-            <small>Probabilidade aplicada por etapa</small>
-          </article>
-          <article className="kpiCard">
-            <span>Propostas abertas</span>
-            <strong>{summary.proposalsOpen}</strong>
-            <small>Proposta enviada ou negociação</small>
-          </article>
-          <article className="kpiCard">
-            <span>Conversão decidida</span>
-            <strong>{summary.conversionRate.toFixed(0)}%</strong>
-            <small>
-              {summary.wonDeals} ganho · {summary.lostDeals} perdido
-            </small>
-          </article>
-          <article className="kpiCard kpiAttention">
-            <span>Próximas ações vencidas</span>
-            <strong>{summary.overdueNextActions}</strong>
-            <small>Exigem atualização imediata</small>
-          </article>
-        </section>
 
         <section className="sectionBlock funnelMetricsBlock" aria-label="Indicadores de faturamento e funil do mês">
           <div className="sectionHeader">
@@ -170,79 +135,12 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="sectionBlock" id="pipeline">
-          <div className="sectionHeader">
-            <div>
-              <p className="eyebrow">Pipeline</p>
-              <h2>Distribuição por etapa</h2>
-            </div>
-            <span className="sectionNote">Uma oportunidade, um responsável</span>
-          </div>
-
-          <div className="pipelineGrid">
-            {dashboard.pipeline.map((group, index) => (
-              <article className="pipelineCard" key={group.stage}>
-                <span className="stageIndex">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <strong>{group.stage}</strong>
-                <div>
-                  <span>{group.leads.length} leads</span>
-                  <span>{formatCurrency(group.totalValue)}</span>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <div className="contentGrid">
-          <section className="sectionBlock" id="oportunidades">
-            <div className="sectionHeader">
-              <div>
-                <p className="eyebrow">Execução</p>
-                <h2>Próximas oportunidades</h2>
-              </div>
-              <span className="sectionNote">
-                Ordenadas pela próxima ação
-              </span>
-            </div>
-
-            <div className="tableWrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Empresa</th>
-                    <th>Etapa</th>
-                    <th>Valor</th>
-                    <th>Próxima ação</th>
-                    <th>Prazo</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {dashboard.activeLeads.slice(0, 7).map((lead) => (
-                    <tr key={lead.id}>
-                      <td>
-                        <strong>{lead.companyName}</strong>
-                        <span>{lead.segment}</span>
-                      </td>
-                      <td>
-                        <span className="statusBadge">{lead.stage}</span>
-                      </td>
-                      <td>{formatCurrency(lead.estimatedValue)}</td>
-                      <td>{lead.nextAction}</td>
-                      <td>{formatShortDate(lead.nextActionAt)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
-
-          <aside className="taskPanel" id="rotina">
+        <section className="sectionBlock routineSection" id="rotina">
+          <aside className="taskPanel">
             <p className="eyebrow lightEyebrow">Agenda</p>
             <h2>Rotina imediata</h2>
             <div className="taskList">
-              {dashboard.openTasks.map((task) => (
+              {openTasks.map((task) => (
                 <article key={task.id}>
                   <span className={`priority priority${task.priority}`}>
                     {task.priority}
@@ -253,7 +151,7 @@ export default async function Home() {
               ))}
             </div>
           </aside>
-        </div>
+        </section>
 
         <section className="goalGrid" id="metas">
           <article className="goalCard">
