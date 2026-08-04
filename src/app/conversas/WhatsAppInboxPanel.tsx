@@ -11,6 +11,14 @@ import {
   filterAndSortChats,
   type InboxFilter
 } from "@/lib/whatsapp/inbox-state";
+import {
+  canConvertConversation,
+  qualificationStatusLabel
+} from "@/lib/whatsapp/qualification";
+import {
+  WHATSAPP_QUALIFICATION_STATUSES,
+  type WhatsappQualificationStatus
+} from "@/lib/whatsapp/repository";
 
 interface ChatsResponse {
   ok: boolean;
@@ -31,6 +39,18 @@ interface SendResponse {
   message?: string;
 }
 
+interface QualificationStatusResponse {
+  ok: boolean;
+  qualificationStatus?: WhatsappQualificationStatus;
+  message?: string;
+}
+
+interface LeadConversionResponse {
+  ok: boolean;
+  leadId?: string;
+  message?: string;
+}
+
 const POLL_INTERVAL_MS = 5000;
 
 export function WhatsAppInboxPanel() {
@@ -42,6 +62,10 @@ export function WhatsAppInboxPanel() {
   const [listState, setListState] = useState<"loading" | "ready" | "error">("loading");
   const [timelineState, setTimelineState] = useState<"idle" | "loading" | "ready" | "error">("idle");
   const [sendState, setSendState] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [statusState, setStatusState] = useState<"idle" | "updating">("idle");
+  const [conversionState, setConversionState] = useState<"idle" | "converting" | "converted">("idle");
+  const [companyName, setCompanyName] = useState("");
+  const [segment, setSegment] = useState("");
   const [draft, setDraft] = useState("");
   const [error, setError] = useState<string | null>(null);
 
@@ -124,8 +148,85 @@ export function WhatsAppInboxPanel() {
     if (chat.isGroup) return;
     setSelectedPhone(chat.phone);
     setSendState("idle");
+    setStatusState("idle");
+    setConversionState("idle");
+    setCompanyName(chat.name || "");
+    setSegment("");
     setDraft("");
     void requestTimeline(chat.phone);
+  }
+
+  async function changeQualificationStatus(status: WhatsappQualificationStatus) {
+    if (!selectedPhone || statusState === "updating") return;
+
+    setStatusState("updating");
+    setError(null);
+
+    try {
+      const response = await fetch(
+        `/api/conversas/${encodeURIComponent(selectedPhone)}/status`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status })
+        }
+      );
+      const data = (await response.json()) as QualificationStatusResponse;
+
+      if (!response.ok || !data.ok || !data.qualificationStatus) {
+        throw new Error(data.message ?? "Não foi possível atualizar o estado.");
+      }
+
+      setConversation((current) =>
+        current
+          ? { ...current, qualificationStatus: data.qualificationStatus! }
+          : current
+      );
+    } catch (statusError) {
+      setError(
+        statusError instanceof Error
+          ? statusError.message
+          : "Não foi possível atualizar o estado."
+      );
+    } finally {
+      setStatusState("idle");
+    }
+  }
+
+  async function submitLeadConversion(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!selectedPhone || !companyName.trim() || !segment.trim() || conversionState === "converting") {
+      return;
+    }
+
+    setConversionState("converting");
+    setError(null);
+
+    try {
+      const response = await fetch(
+        `/api/conversas/${encodeURIComponent(selectedPhone)}/lead`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ companyName, segment })
+        }
+      );
+      const data = (await response.json()) as LeadConversionResponse;
+
+      if (!response.ok || !data.ok) {
+        throw new Error(data.message ?? "Não foi possível converter a conversa.");
+      }
+
+      setConversionState("converted");
+      await requestTimeline(selectedPhone, false);
+    } catch (conversionError) {
+      setError(
+        conversionError instanceof Error
+          ? conversionError.message
+          : "Não foi possível converter a conversa."
+      );
+      setConversionState("idle");
+    }
   }
 
   async function submitMessage(event: FormEvent<HTMLFormElement>) {
@@ -259,12 +360,75 @@ export function WhatsAppInboxPanel() {
                     <span>{selectedChat.phone}</span>
                   </div>
                   <div className="inboxConversationContext">
-                    <span>{conversation?.leadId ? "Lead vinculado" : "Contato ainda não vinculado a lead"}</span>
+                    <span>{conversation?.leadId ? "Lead vinculado" : "Contato operacional"}</span>
+                    <strong className="inboxQualificationBadge">
+                      {qualificationStatusLabel(conversation?.qualificationStatus ?? "new")}
+                    </strong>
                     <span>{conversation?.sourceChannel ?? "WhatsApp inbound"}</span>
                     {conversation?.sourceDetail ? <span>Origem: {conversation.sourceDetail}</span> : null}
                     {conversation?.campaign ? <span>Campanha: {conversation.campaign}</span> : null}
                   </div>
                 </header>
+
+                <div className="inboxQualificationPanel">
+                  <div>
+                    <p className="eyebrow">Estado da jornada</p>
+                    <span>
+                      O contato começa em Novo. Atualize o estado após a tratativa;
+                      novas mensagens não reiniciam esta etapa.
+                    </span>
+                  </div>
+                  <div className="inboxQualificationActions" role="group" aria-label="Atualizar estado da conversa">
+                    {WHATSAPP_QUALIFICATION_STATUSES.map((status) => (
+                      <button
+                        className={
+                          `inboxQualificationButton${(conversation?.qualificationStatus ?? "new") === status ? " inboxQualificationButtonActive" : ""}`
+                        }
+                        disabled={statusState === "updating" || (conversation?.qualificationStatus ?? "new") === status}
+                        key={status}
+                        onClick={() => void changeQualificationStatus(status)}
+                        type="button"
+                      >
+                        {qualificationStatusLabel(status)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {conversation && canConvertConversation(conversation) ? (
+                  <form className="inboxLeadConversion" onSubmit={submitLeadConversion}>
+                    <div>
+                      <p className="eyebrow">Conversão explícita</p>
+                      <strong>Transformar contato qualificado em lead</strong>
+                      <span>
+                        Informe os dados mínimos para criar a oportunidade e vinculá-la a esta conversa.
+                      </span>
+                    </div>
+                    <div className="inboxLeadConversionFields">
+                      <label>
+                        Empresa
+                        <input
+                          onChange={(event) => setCompanyName(event.target.value)}
+                          placeholder="Nome da empresa"
+                          required
+                          value={companyName}
+                        />
+                      </label>
+                      <label>
+                        Segmento
+                        <input
+                          onChange={(event) => setSegment(event.target.value)}
+                          placeholder="Ex.: serviços, turismo, gastronomia"
+                          required
+                          value={segment}
+                        />
+                      </label>
+                      <button className="primaryLinkButton" disabled={conversionState === "converting"} type="submit">
+                        {conversionState === "converting" ? "Convertendo…" : "Converter em lead"}
+                      </button>
+                    </div>
+                  </form>
+                ) : null}
 
                 <div className="inboxPolicyNotice">
                   Resposta manual pelo número conectado · somente texto

@@ -1253,6 +1253,117 @@ td:first-child span {
   text-align: right;
 }
 
+.inboxQualificationBadge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 3px 8px;
+  color: var(--pa-black-green);
+  background: rgba(121, 154, 82, 0.22);
+  border-radius: 8px;
+  font-size: 10px;
+  letter-spacing: 0.03em;
+}
+
+.inboxQualificationPanel,
+.inboxLeadConversion {
+  display: grid;
+  gap: 14px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--pa-hairline);
+  background: var(--pa-surface-tint);
+}
+
+.inboxQualificationPanel {
+  grid-template-columns: minmax(220px, 0.75fr) minmax(0, 1.25fr);
+  align-items: center;
+}
+
+.inboxQualificationPanel > div:first-child,
+.inboxLeadConversion > div:first-child {
+  display: grid;
+  gap: 5px;
+}
+
+.inboxQualificationPanel > div:first-child > span,
+.inboxLeadConversion > div:first-child > span {
+  color: var(--pa-graphite-60);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.inboxQualificationActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.inboxQualificationButton {
+  min-height: 30px;
+  padding: 0 9px;
+  color: var(--pa-graphite-60);
+  background: var(--pa-white);
+  border: 1px solid var(--pa-hairline);
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.inboxQualificationButton:hover,
+.inboxQualificationButton:focus-visible,
+.inboxQualificationButtonActive {
+  color: var(--pa-white);
+  background: var(--pa-black-green);
+  border-color: var(--pa-black-green);
+  outline: none;
+}
+
+.inboxQualificationButton:disabled {
+  cursor: default;
+  opacity: 0.58;
+}
+
+.inboxLeadConversion {
+  background: rgba(121, 154, 82, 0.1);
+}
+
+.inboxLeadConversion > div:first-child > strong {
+  color: var(--pa-black);
+  font-size: 13px;
+}
+
+.inboxLeadConversionFields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.inboxLeadConversionFields label {
+  display: grid;
+  gap: 5px;
+  color: var(--pa-graphite);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.inboxLeadConversionFields input {
+  min-height: 38px;
+  padding: 0 10px;
+  color: var(--pa-black);
+  background: var(--pa-white);
+  border: 1px solid var(--pa-hairline);
+  border-radius: 3px;
+  outline: none;
+}
+
+.inboxLeadConversionFields input:focus {
+  border-color: var(--pa-teal);
+  box-shadow: 0 0 0 3px rgba(42, 98, 131, 0.12);
+}
+
 .inboxPolicyNotice {
   padding: 9px 20px;
   color: var(--pa-teal);
@@ -1456,6 +1567,18 @@ td:first-child span {
   .inboxConversationContext {
     justify-items: start;
     text-align: left;
+  }
+
+  .inboxQualificationPanel {
+    grid-template-columns: 1fr;
+  }
+
+  .inboxQualificationActions {
+    justify-content: flex-start;
+  }
+
+  .inboxLeadConversionFields {
+    grid-template-columns: 1fr;
   }
 
   .headerMeta {
