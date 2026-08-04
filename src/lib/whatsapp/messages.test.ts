@@ -36,6 +36,31 @@ describe("normalizeZapiReceivedMessage", () => {
     });
   });
 
+  it("extracts only the campaign attribution footer from a tracked WhatsApp message", () => {
+    expect(
+      normalizeZapiReceivedMessage(
+        {
+          ...basePayload,
+          text: {
+            message:
+              "OlÃ¡, quero saber mais\n\n---\nOrigem: facebook\nCampanha: poa-inbound-01\nGCLID: gclid-123"
+          }
+        },
+        "instance-1"
+      )
+    ).toMatchObject({
+      ok: true,
+      message: {
+        body: "OlÃ¡, quero saber mais",
+        attribution: {
+          source: "facebook",
+          campaign: "poa-inbound-01",
+          gclid: "gclid-123"
+        }
+      }
+    });
+  });
+
   it.each([
     ["the wrong instance", { instanceId: "other-instance" }],
     ["a missing message id", { messageId: "" }],

@@ -9,6 +9,13 @@ export interface NormalizedReceivedMessage {
   body: string;
   status: string | null;
   occurredAt: string;
+  attribution?: WhatsappAttribution;
+}
+
+export interface WhatsappAttribution {
+  source: string | null;
+  campaign: string | null;
+  gclid: string | null;
 }
 
 export interface NormalizedDelivery {
@@ -39,7 +46,9 @@ export function normalizeZapiReceivedMessage(
   const instanceId = stringValue(payload.instanceId);
   const providerMessageId = stringValue(payload.messageId);
   const phone = stringValue(payload.phone);
-  const body = isRecord(payload.text) ? stringValue(payload.text.message) : "";
+  const rawBody = isRecord(payload.text) ? stringValue(payload.text.message) : "";
+  const trackedText = parseTrackedText(rawBody);
+  const body = trackedText.body;
   const occurredAt = timestampToIso(payload.momment);
 
   if (
@@ -53,20 +62,26 @@ export function normalizeZapiReceivedMessage(
     return invalidWebhook();
   }
 
+  const message: NormalizedReceivedMessage = {
+    instanceId,
+    providerMessageId,
+    phone,
+    name: stringValue(payload.chatName) || null,
+    isGroup: payload.isGroup === true,
+    direction: payload.fromMe === true ? "outbound" : "inbound",
+    messageType: "text",
+    body,
+    status: stringValue(payload.status).toUpperCase() || null,
+    occurredAt
+  };
+
+  if (trackedText.attribution) {
+    message.attribution = trackedText.attribution;
+  }
+
   return {
     ok: true,
-    message: {
-      instanceId,
-      providerMessageId,
-      phone,
-      name: stringValue(payload.chatName) || null,
-      isGroup: payload.isGroup === true,
-      direction: payload.fromMe === true ? "outbound" : "inbound",
-      messageType: "text",
-      body,
-      status: stringValue(payload.status).toUpperCase() || null,
-      occurredAt
-    }
+    message
   };
 }
 
@@ -152,4 +167,41 @@ function normalizeDeliveryStatus(value: unknown): NormalizedDelivery["status"] {
   if (status === "pending") return "pending";
   if (status === "sent") return "sent";
   return "sent";
+}
+
+function parseTrackedText(value: string): {
+  body: string;
+  attribution?: WhatsappAttribution;
+} {
+  const markerIndex = value.lastIndexOf("\n\n---");
+  if (markerIndex < 0) {
+    return { body: value };
+  }
+
+  const body = value.slice(0, markerIndex).trim();
+  const footer = value.slice(markerIndex + 6);
+  const fields = new Map<string, string>();
+
+  for (const line of footer.split(/\r?\n/)) {
+    const separator = line.indexOf(":");
+    if (separator <= 0) continue;
+
+    const key = line.slice(0, separator).trim();
+    const field = line.slice(separator + 1).trim();
+    if (["Origem", "Campanha", "GCLID"].includes(key) && field.length <= 160) {
+      fields.set(key, field);
+    }
+  }
+
+  const source = fields.get("Origem") || null;
+  const campaign = fields.get("Campanha") || null;
+  const gclid = fields.get("GCLID") || null;
+
+  return {
+    body,
+    attribution:
+      source || campaign || gclid
+        ? { source, campaign, gclid }
+        : undefined
+  };
 }

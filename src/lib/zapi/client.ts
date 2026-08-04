@@ -86,7 +86,7 @@ export function createZapiClient(
       const response = await callZapi(config, fetcher, "status");
 
       if (!response.ok) {
-        return safeError();
+        return safeError<ZapiStatusResult>();
       }
 
       const data = (await response.json()) as Partial<{
@@ -107,7 +107,7 @@ export function createZapiClient(
       const response = await callZapi(config, fetcher, "qr-code/image");
 
       if (!response.ok) {
-        return safeError();
+        return safeError<ZapiQrCodeResult>();
       }
 
       const data = (await response.json()) as Partial<{
@@ -155,7 +155,7 @@ export function createZapiClient(
       );
 
       if (!response.ok) {
-        return safeError();
+        return safeError<ZapiChatsResult>();
       }
 
       const data = (await response.json()) as unknown;
@@ -186,7 +186,7 @@ export function createZapiClient(
       });
 
       if (!response.ok) {
-        return safeError();
+        return safeError<ZapiSendTextResult>();
       }
 
       const data = (await response.json()) as Partial<{
@@ -197,7 +197,7 @@ export function createZapiClient(
       const messageId = stringFromZapi(data.messageId) || stringFromZapi(data.id);
 
       if (!messageId) {
-        return safeError();
+        return safeError<ZapiSendTextResult>();
       }
 
       return {
@@ -271,13 +271,9 @@ function timestampSecondsToIso(value: unknown): string | null {
   return seconds > 0 ? new Date(seconds * 1000).toISOString() : null;
 }
 
-function safeError():
-  | ZapiStatusResult
-  | ZapiQrCodeResult
-  | ZapiChatsResult
-  | ZapiSendTextResult {
+function safeError<T>(): T {
   return {
     ok: false,
     message: ZAPI_SAFE_ERROR
-  };
+  } as T;
 }
