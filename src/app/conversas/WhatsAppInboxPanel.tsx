@@ -155,7 +155,9 @@ export function WhatsAppInboxPanel() {
     setStatusState("idle");
     setConversionState("idle");
     setConversionOpen(false);
-    setCompanyName(chat.name || "");
+    // O nome do contato é herdado como identificação, não como nome da empresa.
+    // A empresa precisa ser confirmada pelo operador no formulário de conversão.
+    setCompanyName("");
     setSegment("");
     setNextAction("");
     setNextActionAt("");
@@ -399,6 +401,7 @@ export function WhatsAppInboxPanel() {
                       <ConversationAction
                         conversation={conversation}
                         onConvert={() => {
+                          setError(null);
                           setConversionState("idle");
                           setConversionOpen(true);
                         }}
