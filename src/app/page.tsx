@@ -1,13 +1,12 @@
-import {
-  buildDashboardViewModel,
-  formatCurrency,
-  formatShortDate
-} from "@/lib/crm/dashboard";
+import Link from "next/link";
+
+import { formatCurrency } from "@/lib/crm/dashboard";
+import { buildImmediateRoutine } from "@/lib/crm/immediate-routine";
 import { listLeads } from "@/lib/crm/leads-repository";
 import { getFunnelMetrics } from "@/lib/crm/funnel-metrics-repository";
 import { calculateTargetPacing } from "@/lib/crm/target-pacing";
 import { getMonthlyRevenueTarget } from "@/lib/crm/targets-repository";
-import { mockLeads, mockTasks } from "@/lib/crm/mock-data";
+import { mockLeads } from "@/lib/crm/mock-data";
 import { getProfileDisplayName } from "@/lib/auth/access";
 import { requireCurrentAdmin } from "@/lib/auth/session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -32,13 +31,7 @@ export default async function Home() {
   const dataLabel = persistedLeads.length
     ? "Dados reais · sessão protegida"
     : "Dados simulados · sessão protegida";
-  const dashboard = buildDashboardViewModel(
-    leads,
-    mockTasks,
-    referenceDate,
-    funnelMetrics
-  );
-  const { openTasks } = dashboard;
+  const routineItems = buildImmediateRoutine(leads, referenceDate);
 
   return (
     <div className="appShell">
@@ -139,16 +132,34 @@ export default async function Home() {
           <aside className="taskPanel">
             <p className="eyebrow lightEyebrow">Agenda</p>
             <h2>Rotina imediata</h2>
+            <p className="routineDescription">
+              Ações com data e hora registradas no CRM, ordenadas pela urgência operacional.
+            </p>
             <div className="taskList">
-              {openTasks.map((task) => (
-                <article key={task.id}>
-                  <span className={`priority priority${task.priority}`}>
-                    {task.priority}
+              {routineItems.length > 0 ? routineItems.map((item) => (
+                <article
+                  className={`routineItem routineItem${item.status === "overdue" ? "Overdue" : "Upcoming"}`}
+                  key={item.id}
+                >
+                  <span className={`priority priority${item.priority}`}>
+                    {item.priority}
                   </span>
-                  <strong>{task.title}</strong>
-                  <small>{formatShortDate(task.dueAt)}</small>
+                  <div className="routineItemBody">
+                    {item.leadId ? (
+                      <Link href={`/leads/${item.leadId}`}>{item.title}</Link>
+                    ) : (
+                      <strong>{item.title}</strong>
+                    )}
+                    <small>{item.companyName} · {item.stage}</small>
+                    <time dateTime={item.dueAt}>
+                      {formatRoutineDateTime(item.dueAt)}
+                      {item.status === "overdue" ? " · Vencida" : ""}
+                    </time>
+                  </div>
                 </article>
-              ))}
+              )) : (
+                <p className="routineEmpty">Nenhuma ação com data e hora registrada.</p>
+              )}
             </div>
           </aside>
         </section>
@@ -234,6 +245,16 @@ function formatResponseMinutes(value: number | null): string {
   if (value === null) return "—";
   if (value < 60) return `${Math.round(value)} min`;
   return `${(value / 60).toFixed(1)} h`;
+}
+
+function formatRoutineDateTime(value: string): string {
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  }).format(new Date(value));
 }
 
 function formatMonthLabel(value: Date): string {

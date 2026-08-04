@@ -588,12 +588,75 @@ td:first-child span {
   margin-top: 22px;
 }
 
+.routineDescription {
+  max-width: 620px;
+  margin: 8px 0 0;
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 .taskList article {
   display: grid;
   gap: 8px;
   padding: 14px;
   border: 1px solid rgba(255, 255, 255, 0.13);
   border-radius: 2px;
+}
+
+.routineItem {
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+}
+
+.routineItemOverdue {
+  border-color: rgba(147, 13, 0, 0.72);
+}
+
+.routineItemBody {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.routineItemBody a,
+.routineItemBody strong {
+  color: var(--pa-white);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.routineItemBody a {
+  text-decoration: none;
+}
+
+.routineItemBody a:hover,
+.routineItemBody a:focus-visible {
+  color: var(--pa-olive);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.routineItemBody small,
+.routineItemBody time {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.routineItemOverdue time {
+  color: #f2aaa4;
+  font-weight: 700;
+}
+
+.routineEmpty {
+  margin: 0;
+  padding: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px dashed rgba(255, 255, 255, 0.24);
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .taskList strong {

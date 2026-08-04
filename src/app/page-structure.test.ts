@@ -15,4 +15,10 @@ describe("Visão Geral", () => {
     expect(source).not.toContain("Conversão decidida");
     expect(source).not.toContain("Próximas ações vencidas");
   });
+
+  it("deriva a rotina imediata das próximas ações dos leads", () => {
+    expect(source).toContain("buildImmediateRoutine");
+    expect(source).toContain("routineItems");
+    expect(source).toContain("<time dateTime=");
+  });
 });
