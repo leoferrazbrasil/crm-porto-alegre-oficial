@@ -31,6 +31,32 @@ describe("readZapiConfig", () => {
 });
 
 describe("createZapiClient", () => {
+  it("desconecta a instância usando o endpoint oficial", async () => {
+    const calls: Array<{ url: string; headers: HeadersInit | undefined }> = [];
+    const client = createZapiClient(
+      {
+        instanceId: "instance-1",
+        instanceToken: "token-1",
+        clientToken: "client-token-1"
+      },
+      async (url, init) => {
+        calls.push({ url: String(url), headers: init?.headers });
+        return jsonResponse({ value: true });
+      }
+    );
+
+    await expect(client.disconnect()).resolves.toEqual({
+      ok: true,
+      message: "Número desconectado da Z-API."
+    });
+    expect(calls).toEqual([
+      {
+        url: "https://api.z-api.io/instances/instance-1/token/token-1/disconnect",
+        headers: { "Client-Token": "client-token-1" }
+      }
+    ]);
+  });
+
   it("requests instance status using the documented URL and Client-Token header", async () => {
     const calls: Array<{ url: string; headers: HeadersInit | undefined }> = [];
     const client = createZapiClient(

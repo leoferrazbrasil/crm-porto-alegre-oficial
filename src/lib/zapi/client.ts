@@ -31,6 +31,16 @@ export type ZapiQrCodeResult =
       message: string;
   };
 
+export type ZapiDisconnectResult =
+  | {
+      ok: true;
+      message: string;
+    }
+  | {
+      ok: false;
+      message: string;
+    };
+
 export interface ZapiChat {
   phone: string;
   name: string;
@@ -69,6 +79,7 @@ export type ZapiSendTextResult =
     };
 
 export interface ZapiClient {
+  disconnect(): Promise<ZapiDisconnectResult>;
   getStatus(): Promise<ZapiStatusResult>;
   getQrCodeImage(): Promise<ZapiQrCodeResult>;
   getChats(page?: number, pageSize?: number): Promise<ZapiChatsResult>;
@@ -82,6 +93,19 @@ export function createZapiClient(
   fetcher: ZapiFetcher = fetch
 ): ZapiClient {
   return {
+    async disconnect() {
+      const response = await callZapi(config, fetcher, "disconnect");
+
+      if (!response.ok) {
+        return safeError<ZapiDisconnectResult>();
+      }
+
+      return {
+        ok: true,
+        message: "Número desconectado da Z-API."
+      };
+    },
+
     async getStatus() {
       const response = await callZapi(config, fetcher, "status");
 

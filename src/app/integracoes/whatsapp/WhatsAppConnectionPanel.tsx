@@ -1,7 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+const QR_REFRESH_INTERVAL_MS = 15_000;
 
 type ConnectionState = "idle" | "loading" | "ready" | "error";
 
@@ -30,28 +32,113 @@ type ZapiQrCode =
     }
   | {
       ok: false;
+    message: string;
+  };
+
+type ZapiDisconnect =
+  | {
+      ok: true;
+      message: string;
+    }
+  | {
+      ok: false;
       message: string;
     };
 
 export function WhatsAppConnectionPanel() {
   const [statusState, setStatusState] = useState<ConnectionState>("idle");
   const [qrState, setQrState] = useState<ConnectionState>("idle");
+  const [disconnectState, setDisconnectState] =
+    useState<ConnectionState>("idle");
   const [status, setStatus] = useState<ZapiStatus | null>(null);
   const [qrCode, setQrCode] = useState<ZapiQrCode | null>(null);
+  const [disconnectMessage, setDisconnectMessage] = useState<string | null>(null);
+  const [qrPollingEnabled, setQrPollingEnabled] = useState(false);
+  const qrRequestInFlight = useRef(false);
 
-  const loadStatus = useCallback(async () => {
-    setStatusState("loading");
+  const loadQrCode = useCallback(async (options?: { silent?: boolean }) => {
+    if (qrRequestInFlight.current) return;
+
+    qrRequestInFlight.current = true;
+    if (!options?.silent) setQrState("loading");
+
+    try {
+      const payload = await fetchJson<ZapiQrCode>("/api/zapi/qrcode");
+      setQrCode(payload);
+      setQrState(payload.ok ? "ready" : "error");
+    } finally {
+      qrRequestInFlight.current = false;
+    }
+  }, []);
+
+  const loadStatus = useCallback(async (options?: { silent?: boolean }) => {
+    if (!options?.silent) setStatusState("loading");
+    setDisconnectMessage(null);
+
     const payload = await fetchJson<ZapiStatus>("/api/zapi/status");
     setStatus(payload);
     setStatusState(payload.ok ? "ready" : "error");
-  }, []);
 
-  const loadQrCode = useCallback(async () => {
-    setQrState("loading");
-    const payload = await fetchJson<ZapiQrCode>("/api/zapi/qrcode");
-    setQrCode(payload);
-    setQrState(payload.ok ? "ready" : "error");
-  }, []);
+    if (payload.ok && payload.connected) {
+      setQrPollingEnabled(false);
+      setQrCode(null);
+      setQrState("idle");
+    } else if (payload.ok) {
+      setQrPollingEnabled(true);
+      void loadQrCode({ silent: true });
+    }
+  }, [loadQrCode]);
+
+  const disconnectInstance = useCallback(async () => {
+    if (
+      disconnectState === "loading" ||
+      !window.confirm(
+        "Deseja desconectar o número atual? Será necessário ler um novo QR Code para reconectar."
+      )
+    ) {
+      return;
+    }
+
+    setDisconnectState("loading");
+    setDisconnectMessage(null);
+
+    try {
+      const payload = await fetchJson<ZapiDisconnect>("/api/zapi/disconnect", {
+        method: "POST"
+      });
+
+      if (!payload.ok) {
+        setDisconnectState("error");
+        setDisconnectMessage(payload.message);
+        return;
+      }
+
+      setDisconnectState("ready");
+      setStatus({
+        ok: true,
+        connected: false,
+        smartphoneConnected: false,
+        message: payload.message
+      });
+      setQrCode(null);
+      setQrState("idle");
+      setQrPollingEnabled(true);
+      void loadQrCode();
+    } catch {
+      setDisconnectState("error");
+      setDisconnectMessage("Não foi possível desconectar a instância neste momento.");
+    }
+  }, [disconnectState, loadQrCode]);
+
+  useEffect(() => {
+    if (!qrPollingEnabled) return;
+
+    const intervalId = window.setInterval(() => {
+      void loadStatus({ silent: true });
+    }, QR_REFRESH_INTERVAL_MS);
+
+    return () => window.clearInterval(intervalId);
+  }, [loadStatus, qrPollingEnabled]);
 
   return (
     <div className="whatsappGrid">
@@ -88,14 +175,32 @@ export function WhatsAppConnectionPanel() {
           </p>
         ) : null}
 
-        <button
-          className="authButton"
-          disabled={statusState === "loading"}
-          type="button"
-          onClick={() => void loadStatus()}
-        >
-          {statusState === "loading" ? "Consultando..." : "Atualizar status"}
-        </button>
+        {disconnectMessage ? (
+          <p className="authMessage authMessageerror">{disconnectMessage}</p>
+        ) : null}
+
+        <div className="formActions">
+          <button
+            className="authButton"
+            disabled={statusState === "loading" || disconnectState === "loading"}
+            type="button"
+            onClick={() => void loadStatus()}
+          >
+            {statusState === "loading" ? "Consultando..." : "Atualizar status"}
+          </button>
+          {status?.ok && status.connected ? (
+            <button
+              className="dangerButton integrationDangerButton"
+              disabled={disconnectState === "loading"}
+              type="button"
+              onClick={() => void disconnectInstance()}
+            >
+              {disconnectState === "loading"
+                ? "Desconectando..."
+                : "Desconectar número"}
+            </button>
+          ) : null}
+        </div>
       </article>
 
       <article className="integrationCard">
@@ -138,7 +243,10 @@ export function WhatsAppConnectionPanel() {
             className="authButton"
             disabled={qrState === "loading"}
             type="button"
-            onClick={() => void loadQrCode()}
+            onClick={() => {
+              setQrPollingEnabled(true);
+              void loadQrCode();
+            }}
           >
             {qrState === "loading" ? "Carregando..." : "Gerar QR Code"}
           </button>
@@ -183,10 +291,12 @@ function StatusPill({
   );
 }
 
-async function fetchJson<T>(url: string): Promise<T> {
+async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
   const response = await fetch(url, {
+    ...init,
     headers: {
-      accept: "application/json"
+      accept: "application/json",
+      ...(init?.headers ?? {})
     }
   });
   return (await response.json()) as T;
