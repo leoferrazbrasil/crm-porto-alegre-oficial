@@ -10,11 +10,20 @@ const PUBLIC_AUTH_PATHS = new Set([
   "/auth/update-password"
 ]);
 
+const PUBLIC_WEBHOOK_PREFIXES = [
+  "/api/webhooks/zapi/received/",
+  "/api/webhooks/zapi/delivery/"
+];
+
 const PUBLIC_FILE_PATTERN =
   /\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|map|txt|xml)$/i;
 
 export function isPublicAuthPath(pathname: string): boolean {
   return PUBLIC_AUTH_PATHS.has(pathname);
+}
+
+export function isPublicWebhookPath(pathname: string): boolean {
+  return PUBLIC_WEBHOOK_PREFIXES.some((prefix) => pathname.startsWith(prefix));
 }
 
 export function isAssetPath(pathname: string): boolean {
@@ -26,6 +35,10 @@ export function getAuthRedirect(
   isAuthenticated: boolean
 ): string | null {
   if (isAssetPath(pathname)) {
+    return null;
+  }
+
+  if (isPublicWebhookPath(pathname)) {
     return null;
   }
 

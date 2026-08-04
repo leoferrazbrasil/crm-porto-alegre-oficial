@@ -20,6 +20,11 @@ describe("auth proxy route decisions", () => {
     expect(getAuthRedirect("/pipeline", false)).toBe("/login");
   });
 
+  it("allows unauthenticated Z-API webhooks to reach their secret validation", () => {
+    expect(getAuthRedirect("/api/webhooks/zapi/received/example-secret", false)).toBeNull();
+    expect(getAuthRedirect("/api/webhooks/zapi/delivery/example-secret", false)).toBeNull();
+  });
+
   it("redirects authenticated users away from login", () => {
     expect(getAuthRedirect("/login", true)).toBe("/");
   });
